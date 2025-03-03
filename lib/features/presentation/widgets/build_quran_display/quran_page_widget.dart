@@ -48,7 +48,27 @@ class QuranPageWidget extends StatelessWidget {
     int? lastPage;
 
     // List of words to highlight in red
-    final wordsToHighlight = ["ٱللَّهِ", "لِلَّهِ", "ٱللَّهُ", "ٱللَّهَ"];
+    final wordsToHighlight = [
+      "ٱللَّهِ",
+      "لِلَّهِ",
+      "ٱللَّهُ",
+      "ٱللَّهَ",
+      "الٓمٓ",
+      "الٓمٓصٓ",
+      "الٓرۚ",
+      "الٓمٓرۚ",
+      "كٓهيعٓصٓ",
+      "طه",
+      "طسٓمٓ",
+      "طسٓۚ",
+      "يسٓ",
+      "صٓۚ",
+      "حمٓ",
+      "حم",
+      "عٓسٓقٓ",
+      "قٓۚ",
+      "نٓۚ"
+    ];
 
     for (var ayah in surah.ayahs!) {
       String remainingText = ayah.text!;
@@ -64,7 +84,7 @@ class QuranPageWidget extends StatelessWidget {
             ),
             children: [
               TextSpan(
-                text: " ──────────── ${ayah.page} ──────────── ",
+                text: " ─────────── ${ayah.page} ─────────── ",
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: colorCondition,
@@ -138,75 +158,3 @@ class QuranPageWidget extends StatelessWidget {
     return spans;
   }
 }
-
-// class QuranPageWidget extends StatelessWidget {
-//   final SurahModel surah;
-//
-//   const QuranPageWidget({super.key, required this.surah});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SingleChildScrollView(
-//       child: Center(
-//         child: Padding(
-//           padding: const EdgeInsets.symmetric(horizontal: 20),
-//           child: RichText(
-//             textAlign: TextAlign.center,
-//             textDirection: TextDirection.rtl,
-//             text: TextSpan(
-//               style: TextStyle(
-//                 fontSize: 16.sp,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.black,
-//                 fontFamily: 'Uthmanic',
-//               ),
-//               text: (surah.name == "سُورَةُ التَّوۡبَةِ" || surah.name == "سُورَةُ ٱلْفَاتِحَةِ")
-//                   ? null
-//                   : 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ\n',
-//               children: _buildAyahTextWithPageSeparation(),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   List<InlineSpan> _buildAyahTextWithPageSeparation() {
-//     List<InlineSpan> spans = [];
-//     int? lastPage;
-//
-//     for (var ayah in surah.ayahs!) {
-//       if (lastPage != null && ayah.page != lastPage) {
-//         spans.add(
-//           TextSpan(
-//             text: "\n──────────── ${ayah.page} ────────────\n",
-//             style: TextStyle(
-//               fontSize: 14.sp,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//         );
-//       }
-//
-//       spans.add(
-//         TextSpan(text: "${ayah.text}  "), // وضع النص أولًا
-//       );
-//
-//       spans.add(
-//         TextSpan(text: "(${ayah.numberInSurah}) "), // وضع النص أولًا
-//       );
-//
-//       // spans.add(
-//       //   WidgetSpan(
-//       //     alignment: PlaceholderAlignment.middle,
-//       //     child: ayahSign(ayah.numberInSurah.toString()), // رقم الآية بعد النص
-//       //   ),
-//       // );
-//
-//       spans.add(const TextSpan(text: " ")); // إضافة مسافة بين الآيات
-//       lastPage = ayah.page;
-//     }
-//
-//     return spans;
-//   }
-// }

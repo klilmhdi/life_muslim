@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/functions/functions.dart';
 import 'package:quran_life_muslim/features/presentation/screens/adhan/adhan_screen.dart';
+import 'package:quran_life_muslim/features/presentation/screens/calender/calender_screen.dart';
 import 'package:quran_life_muslim/features/presentation/screens/settings/layout/bookmarks_screen.dart';
 import 'package:quran_life_muslim/features/presentation/screens/settings/layout/settings_layout.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_divider/build_divider_widget.dart';
@@ -37,7 +38,7 @@ Widget customDrawer(context) => Drawer(
           customListTile(
             AppAssets.ramadanCalenderIcon,
             "التقويم الميلادي والهجري",
-            // onTap: () => openWebPage(context, 'https://khlilmhdi-2c480.web.app/'),
+            onTap: () => navToWithLTRAnimation(context, const CalendarScreen()),
           ),
           buildWideDivider(),
           customListTile(

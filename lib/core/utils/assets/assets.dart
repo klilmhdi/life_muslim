@@ -14,6 +14,7 @@ class AppAssets {
   static const String drawerBackgroundImage = 'assets/images/drawer-background.png';
   static const String kabbaBackgroundImage = 'assets/images/kabba.jpg';
   static const String tasbeehFrameImage = 'assets/images/tasbeeh_frame.png';
+  static const String tasbeehBackgroundImage = 'assets/images/backgrd.jpg';
 
   /// icons
   static const String appIcon = 'assets/icons/app-icon.png';
@@ -40,4 +41,8 @@ class AppAssets {
   static const String privacyIcon = 'assets/icons/privacy-policy.png';
   static const String languageIcon = 'assets/icons/languages.png';
   static const String retryIcon = 'assets/icons/retry-icon.jpg';
+  static const String juzIcon = 'assets/icons/juz.png';
+  static const String lightIcon = 'assets/icons/light.png';
+  static const String darkIcon = 'assets/icons/dark.png';
+  static const String quranPageIcon = 'assets/icons/quran_pages.png';
 }

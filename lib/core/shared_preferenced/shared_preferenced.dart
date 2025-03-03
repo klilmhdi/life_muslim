@@ -8,33 +8,13 @@ import '../enums/pr_keys_enum.dart';
 class SharedPrefController {
   SharedPrefController._();
 
-  // static SharedPrefController? _instance;
-  //
-  // late SharedPreferences? _sharedPreferences;
-  //
-  // factory SharedPrefController() {
-  //   return _instance ??= SharedPrefController._();
-  // }
-  //
-  // Future<void> initPreferences() async {
-  //   _sharedPreferences = await SharedPreferences.getInstance();
-  // }
-  //
-  // T? getValueFor<T>(String key) {
-  //   if (_sharedPreferences!.containsKey(key)) {
-  //     return _sharedPreferences!.get(key) as T;
-  //   }
-  //   return null;
-  // }
-
-  //==================> Set the language
-  static SharedPrefController? _instance;
   SharedPreferences? _sharedPreferences;
+  static SharedPrefController? _instance;
 
   static const String _latitudeKey = 'latitude';
   static const String _longitudeKey = 'longitude';
   static const String _bookmarksKey = 'bookmarks';
-  static const String _tasbeehKey = 'tasbeeh';
+  static const String _tasbeehCounterPrefix = 'tasbeeh_counter_';
 
   factory SharedPrefController() => _instance ??= SharedPrefController._();
 
@@ -150,21 +130,21 @@ class SharedPrefController {
     await prefs.setStringList(_bookmarksKey, bookmarks);
   }
 
-  /// حفظ عدد التسبيحات
-  static Future<void> saveTasbeehCounter(int counter) async {
+  // حفظ العداد لتسبيح معين
+  static Future<void> saveTasbeehCounter(String tasbeeh, int counter) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_tasbeehKey, counter);
+    await prefs.setInt('$_tasbeehCounterPrefix$tasbeeh', counter);
   }
 
-  /// استرجاع عدد التسبيحات
-  static Future<int> getTasbeehCounter() async {
+  // استرجاع العداد لتسبيح معين
+  static Future<int> getTasbeehCounter(String tasbeeh) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_tasbeehKey) ?? 0; // القيمة الافتراضية هي 0
+    return prefs.getInt('$_tasbeehCounterPrefix$tasbeeh') ?? 0;
   }
 
-  /// حذف عدد التسبيحات
-  static Future<void> deleteTasbeehCounter() async {
+  // حذف العداد لتسبيح معين
+  static Future<void> deleteTasbeehCounter(String tasbeeh) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tasbeehKey);
+    await prefs.remove('$_tasbeehCounterPrefix$tasbeeh');
   }
 }

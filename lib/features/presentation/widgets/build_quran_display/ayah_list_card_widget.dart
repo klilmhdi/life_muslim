@@ -60,72 +60,79 @@ class _AyahListCardWidgetState extends State<AyahListCardWidget>
 
   @override
   Widget build(BuildContext context) {
-    // final int safeStartIndex = widget.startAyahIndex.clamp(0, widget.surah.ayahs!.length - 1);
-    // print("------------------++++++++++++++++++++----- $safeStartIndex");
-    //
-    // print(
-    //     "........................................... ${widget.surah.ayahs!.length - widget.startAyahIndex}");
-    // print(
-    //     "........................................... ${widget.startAyahIndex - widget.surah.ayahs!.length}");
-    // print("........................................... ${widget.startAyahIndex}");
-    // print("........................................... ${widget.surah.ayahs!.length}");
-    return ListView.builder(
-      controller: _scrollController,
-      // itemCount: widget.surah.ayahs!.length - safeStartIndex,
-      itemCount: widget.surah.ayahs!.length,
-      itemBuilder: (context, index) {
-        // final ayah = widget.surah.ayahs![widget.startAyahIndex == 0 ? index : widget.startAyahIndex + index];
-        // final ayah = widget.surah.ayahs![safeStartIndex + index];
-        final ayah = widget.surah.ayahs![index];
-        // print("------------------++++++++++++++++++++----- ${safeStartIndex + index}");
-        return GestureDetector(
-          // onTap: () => _saveBookmark(widget.surah.ayahs![index]),
-          onTap: () {},
-          child: Card(
-            shadowColor: Colors.deepPurple.withOpacity(0.3),
-            margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-            elevation: 2,
-            color: Colors.transparent,
-            child: Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            ayahSign(ayah.numberInSurah.toString())
-                            // isBookmarked == true
-                            //     ? Icon(Icons.bookmark,
-                            //         color:
-                            //             CupertinoColors.systemYellow.darkElevatedColor)
-                            //     : const SizedBox()
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 4.h),
-                      Expanded(
-                        flex: 10,
-                        child: Text(
-                          ayah.text ?? "No Text",
-                          style: TextStyle(
-                            fontFamily: 'Uthmanic',
-                            fontSize: 22.sp,
-                          ),
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Center(
+            child: Text(
+              widget.surah.name == "سُورَةُ التَّوۡبَةِ" || widget.surah.name == "سُورَةُ ٱلْفَاتِحَةِ"
+                  ? ""
+                  : 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيم',
+              style: TextStyle(
+                fontFamily: 'Uthmanic',
+                fontSize: 22.sp,
               ),
             ),
           ),
-        );
-      },
+          ListView.builder(
+            controller: _scrollController,
+            itemCount: widget.surah.ayahs!.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              final ayah = widget.surah.ayahs![index];
+              return GestureDetector(
+                onTap: () {},
+                child: Card(
+                  shadowColor: Colors.deepPurple.withOpacity(0.3),
+                  margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                  elevation: 2,
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  ayahSign(ayah.numberInSurah.toString())
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 4.h),
+                            Expanded(
+                              flex: 10,
+                              child: Text(
+                                ayah.text ?? "No Text",
+                                style: TextStyle(
+                                  fontFamily: 'Uthmanic',
+                                  fontSize: 22.sp,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          Center(
+            child: Text('صدق الله العظيم\n',
+              style: TextStyle(
+                fontFamily: 'Uthmanic',
+                fontSize: 22.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

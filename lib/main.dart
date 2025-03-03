@@ -13,7 +13,6 @@ import 'package:quran_life_muslim/core/utils/style/app_style.dart';
 import 'package:quran_life_muslim/features/presentation/manage/preyer_timing/prayer_timings_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/manage/quran/quran_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/screens/getstarted/getstarted_screen.dart';
-import 'package:quran_life_muslim/features/presentation/screens/layout/layout.dart';
 import 'package:quran_life_muslim/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,6 +69,7 @@ class _MyAppState extends State<MyApp> {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
+            debugShowCheckedModeBanner: false,
             home: const GetstartedScreen(),
           ),
         ),

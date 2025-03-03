@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/features/data/models/quran/surah_model.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/build_quran_display/ayah_list_card_widget.dart';
-import 'package:quran_life_muslim/features/presentation/widgets/build_quran_sign/ayah_sign_widget.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_appbar/build_appbar.dart';
 
 import '../../widgets/build_quran_display/quran_page_widget.dart';
@@ -32,21 +31,39 @@ class _AyahScreenState extends State<AyahScreen> with SingleTickerProviderStateM
           font: 'Uthmanic',
           extraWidget: IconButton(
               onPressed: () => _toggleView(),
-              icon: Icon(isBookView ? Icons.menu_book_rounded : Icons.table_rows_rounded))),
+              highlightColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              style: const ButtonStyle(
+                shape: WidgetStatePropertyAll(CircleBorder()),
+                backgroundColor: WidgetStatePropertyAll(Colors.deepPurple),
+              ),
+              icon: Icon(
+                isBookView ? Icons.menu_book_rounded : Icons.table_rows_rounded,
+                color: Colors.white,
+                size: 18.sp,
+              )
+              // extraWidget: InkWell(
+              //   highlightColor: Colors.transparent,
+              //   focusColor: Colors.transparent,
+              //   splashColor: Colors.transparent,
+              //   onTap: () => _toggleView(),
+              //   child: isBookView
+              //       ? Image.asset(AppAssets.quranPageIcon, height: 35.h, width: 35.w)
+              //       : const Icon(Icons.table_rows_rounded)
+              )),
       body: Container(
         height: double.infinity,
         decoration: const BoxDecoration(
             image: DecorationImage(
-                image: AssetImage(AppAssets.aqsaBackgroundImage),
-                fit: BoxFit.cover,
-                opacity: 0.3)),
+                image: AssetImage(AppAssets.aqsaBackgroundImage), fit: BoxFit.cover, opacity: 0.3)),
         child: widget.surah.ayahs == null || widget.surah.ayahs!.isEmpty
             ? const Center(child: Text("No Ayah data available"))
             : SafeArea(
-              child: isBookView
-                  ? QuranPageWidget(surah: widget.surah)
-                  : AyahListCardWidget(surah: widget.surah),
-            ),
+                child: isBookView
+                    ? QuranPageWidget(surah: widget.surah)
+                    : AyahListCardWidget(surah: widget.surah),
+              ),
       ),
     );
   }
