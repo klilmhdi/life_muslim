@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "959634312778",
+    "project_id": "quran-life",
+    "storage_bucket": "quran-life.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959634312778:android:dde4f8bf4b3ed2fc6fa0b3",
+        "android_client_info": {
+          "package_name": "com.klilmhdi.quran.quran_life_muslim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZrTiMtIG6N7yIMw1zXo2iBvG3rfg3m74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
