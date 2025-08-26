@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 
 import '../../../../core/utils/assets/assets.dart';
@@ -128,7 +129,7 @@ Widget notificationButton() => ElevatedButton(
       ),
     );
 
-Widget RowButtonsWidget(void Function() preFunction, void Function() postFunction, String tabeeh) => Row(
+Widget rowButtonsWidget(void Function() preFunction, void Function() postFunction, String tabeeh) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
@@ -191,11 +192,11 @@ Widget azkarButton({required String title, required void Function() onTapped}) =
               Row(
                 spacing: 20.w,
                 children: [
-                  Image.asset(
+                  SvgPicture.asset(
                     AppAssets.openBooks,
                     width: 64.w,
                     height: 64.h,
-                    color: CupertinoColors.white,
+                    theme: SvgTheme(currentColor: CupertinoColors.white),
                   ),
                   Text(
                     title,

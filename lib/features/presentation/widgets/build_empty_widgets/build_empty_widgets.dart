@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 
@@ -12,7 +13,7 @@ class EmptyWidgets {
           crossAxisAlignment: CrossAxisAlignment.center,
           spacing: 20.sp,
           children: [
-            Image.asset(AppAssets.bookmarkIcon, height: 80.h, width: 80.w),
+            SvgPicture.asset(AppAssets.bookmarkIcon, height: 80.h, width: 80.w),
             Center(
               child: Text(
                 "لم يتم حفظ أي آيات في العلامات المرجعية",
@@ -30,7 +31,7 @@ class EmptyWidgets {
   static Widget favouriteAyahEmptyWidget() => Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset(AppAssets.favIcon, height: 50.h, width: 50.w),
+          SvgPicture.asset(AppAssets.favIcon, height: 50.h, width: 50.w),
           Center(
             child: Text(
               "لم يتم حفظ أي آيات في العلامات المرجعية",

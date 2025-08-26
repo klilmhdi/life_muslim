@@ -28,6 +28,22 @@
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>نحتاج لموقعك لحساب اتجاه القبلة.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>نحتاج لموقعك للحصول على أوقات الصلاة.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>نحتاج لموقعك أثناء وبعد استخدام التطبيق.</string>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>نحتاج لإرسال إشعارات لمواعيد الصلاة.</string>
+		<key>NSCalendarsUsageDescription</key>
+		<string>نحتاج للوصول للمنطقة الزمنية.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>نحتاج الكاميرا لاختيار صور البروفايل.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>نحتاج الوصول للصور.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>نحتاج الميكروفون للمكالمات الصوتية.</string>
 		<key>UISupportedInterfaceOrientations</key>
 		<array>
 			<string>UIInterfaceOrientationPortrait</string>

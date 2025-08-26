@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 import 'package:quran_life_muslim/core/utils/functions/functions.dart';
@@ -71,21 +72,14 @@ class BuildServicesCardsWidget extends StatelessWidget {
                   : align == 1
                       ? [lightColor.withValues(alpha: 1.5), AppConsts.basicAppColor.withValues(alpha: 0.8)]
                       : [AppConsts.basicAppColor.withValues(alpha: 0.8), lightColor.withValues(alpha: 1.5)],
-              //   colors: [
-              //     lightColor,
-              //     darkColor,
-              //   ],
             ),
-            // color: !isDark ? darkColor : lightColor),
           ),
           child: Stack(
             children: [
               Align(
                 alignment: align == 1 ? Alignment.topLeft : Alignment.bottomRight,
-                child: Image.asset(
+                child: SvgPicture.asset(
                   image,
-                  // width: isPortrait ? 70.w : 100.w,
-                  // height: isPortrait ? 70.h : 100.h,
                   width: isPortrait ? 70.w : 40.w,
                   height: isPortrait ? 70.h : 100.h,
                   fit: BoxFit.contain,

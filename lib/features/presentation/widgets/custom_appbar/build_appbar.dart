@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/app_cubit/app/app_cubit.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
@@ -21,9 +22,9 @@ PreferredSizeWidget buildAppBar(
           ? Builder(builder: (context) {
               return IconButton(
                   onPressed: () => Scaffold.of(context).openDrawer(),
-                  icon: Image.asset(
+                  icon: SvgPicture.asset(
                     AppAssets.menuIcon,
-                    color: CupertinoColors.white,
+                    theme: SvgTheme(currentColor: CupertinoColors.white),
                     height: 24.h,
                     width: 24.w,
                   ));
@@ -55,7 +56,7 @@ PreferredSizeWidget buildAppBar(
                     appCubit.setThemeIndex(themeIndex: 0);
                   }
                 },
-                child: Image.asset(state.themeCurrentIndex == 0 ? AppAssets.lightIcon : AppAssets.darkIcon,
+                child: SvgPicture.asset(state.themeCurrentIndex == 0 ? AppAssets.lightIcon : AppAssets.darkIcon,
                     height: 35.h, width: 35.w));
           },
         ),
@@ -99,7 +100,7 @@ SliverAppBar buildSilverAppBar(
                     appCubit.setThemeIndex(themeIndex: 0);
                   }
                 },
-                child: Image.asset(state.themeCurrentIndex == 0 ? AppAssets.lightIcon : AppAssets.darkIcon,
+                child: SvgPicture.asset(state.themeCurrentIndex == 0 ? AppAssets.lightIcon : AppAssets.darkIcon,
                     height: 35.h, width: 35.w));
           },
         ),

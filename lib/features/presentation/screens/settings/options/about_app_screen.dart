@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_appbar/build_appbar.dart';
@@ -22,7 +23,7 @@ class AboutMuslimLifeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ClipOval(
-                    child: Image.asset(
+                    child: SvgPicture.asset(
                       AppAssets.appIcon,
                       width: 45.w,
                       height: 45.h,
@@ -50,7 +51,7 @@ class AboutMuslimLifeScreen extends StatelessWidget {
                 spacing: 5.w,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Image.asset(
+                  SvgPicture.asset(
                     AppAssets.quranIcon,
                     width: 28.w,
                     height: 28.h,
@@ -93,7 +94,7 @@ class AboutMuslimLifeScreen extends StatelessWidget {
                 spacing: 5.w,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Image.asset(
+                  SvgPicture.asset(
                     AppAssets.sunnahIcon,
                     width: 28.w,
                     height: 28.h,
@@ -104,7 +105,8 @@ class AboutMuslimLifeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const BulletPoint('توفر أدعية عديدة, مثل: أدعية من القرآن الكريم والسنة النبوية, أسماء الله الحسنى, والعديد من الأدعية والأذكار.'),
+              const BulletPoint(
+                  'توفر أدعية عديدة, مثل: أدعية من القرآن الكريم والسنة النبوية, أسماء الله الحسنى, والعديد من الأدعية والأذكار.'),
               SizedBox(height: 10.h),
               Row(
                 spacing: 5.w,

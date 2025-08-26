@@ -1,6 +1,3 @@
-// import 'dart:async' as HydratedBlocOverrides;
-
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,12 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:quran_life_muslim/core/app_cubit/app/app_cubit.dart';
 import 'package:quran_life_muslim/core/bloc_observer.dart';
 import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
 import 'package:quran_life_muslim/core/utils/notification/local_notification_service.dart';
-import 'package:quran_life_muslim/core/utils/notification/remote_notification_service.dart';
 import 'package:quran_life_muslim/core/utils/style/app_style.dart';
 import 'package:quran_life_muslim/features/data/repository/prayer_timing_repo.dart';
 import 'package:quran_life_muslim/features/presentation/manage/azkar/quran_ad3ea/quran_ad3ea_bloc.dart';
@@ -25,7 +20,6 @@ import 'package:quran_life_muslim/features/presentation/manage/preyer_timing/for
 import 'package:quran_life_muslim/features/presentation/manage/quran/quran_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/screens/getstarted/getstarted_screen.dart';
 import 'package:quran_life_muslim/features/presentation/screens/layout/layout.dart';
-import 'package:quran_life_muslim/firebase_options.dart';
 import 'package:quran_life_muslim/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,9 +34,8 @@ import 'features/presentation/manage/notification/notification_bloc.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await LocalNotificationService().initializeNotification();
-  await RemoteNotificationService.init();
+  // await RemoteNotificationService.init();
 
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/tajawal.txt');

@@ -10,8 +10,6 @@ class LocalNotificationService {
   /// Private variables
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
-
-  // Flag to track if custom sound is available
   bool _isCustomSoundAvailable = false;
 
   /// Initialization
@@ -20,35 +18,24 @@ class LocalNotificationService {
 
     await _configureLocalTimeZone();
 
-    // Request permissions for Android 13+
     if (Platform.isAndroid) {
       await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
-      // For older Android versions, you might need requestExactAlarmsPermission
-      // await _flutterLocalNotificationsPlugin
-      //    .resolvePlatformSpecificImplementation<
-      //        AndroidFlutterLocalNotificationsPlugin>()
-      //    ?.requestExactAlarmsPermission();
     }
 
-    // Initialization settings for Android
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('ic_launcher'); // Use your app icon name
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('ic_launcher');
 
-    // Initialization settings for iOS/macOS
     final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
-      requestAlertPermission: false, // Request permission later explicitly
+      requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      // onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
-      // notificationCategories: darwinNotificationCategories, // Define if needed
     );
 
     final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin, // Reuse Darwin settings for macOS
+      macOS: initializationSettingsDarwin,
     );
 
     await _flutterLocalNotificationsPlugin.initialize(
@@ -57,14 +44,12 @@ class LocalNotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // Check if we can create notification channels with custom sound
     if (Platform.isAndroid) {
       try {
         final AndroidFlutterLocalNotificationsPlugin? androidImplementation = _flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
         if (androidImplementation != null) {
-          // Create Test Sound Channel
           const AndroidNotificationChannel testChannel = AndroidNotificationChannel(
             'test_sound_channel_id',
             'Test Sound Channel',
@@ -75,7 +60,6 @@ class LocalNotificationService {
           );
           await androidImplementation.createNotificationChannel(testChannel);
 
-          // Create Prayer Times Channel
           const AndroidNotificationChannel prayerChannel = AndroidNotificationChannel(
             'prayer_channel_id',
             'أوقات الصلاة',
@@ -83,12 +67,10 @@ class LocalNotificationService {
             importance: Importance.max,
             playSound: true,
             sound: RawResourceAndroidNotificationSound('prayer'),
-            // Custom sound for prayer
             audioAttributesUsage: AudioAttributesUsage.alarm,
           );
           await androidImplementation.createNotificationChannel(prayerChannel);
 
-          // Create Prophet Reminder Channel
           const AndroidNotificationChannel prophetReminderChannel = AndroidNotificationChannel(
             'repeating_channel_id',
             'تذكير الصلاة على النبي',
@@ -106,29 +88,27 @@ class LocalNotificationService {
             description: 'تذكير بقراءة سورة الكهف يوم الجمعة',
             importance: Importance.high,
             playSound: true,
-            sound: RawResourceAndroidNotificationSound('note'), // Using 'note' sound
+            sound: RawResourceAndroidNotificationSound('note'),
           );
           await androidImplementation.createNotificationChannel(kahfChannel);
 
-          // Create Morning Adhkar Channel
           const AndroidNotificationChannel morningAdhkarChannel = AndroidNotificationChannel(
             'morning_adhkar_channel_id',
             'أذكار الصباح',
             description: 'تذكير بأذكار الصباح',
             importance: Importance.high,
             playSound: true,
-            sound: RawResourceAndroidNotificationSound('morning'), // Using 'morning' sound
+            sound: RawResourceAndroidNotificationSound('morning'),
           );
           await androidImplementation.createNotificationChannel(morningAdhkarChannel);
 
-          // Create Evening Adhkar Channel
           const AndroidNotificationChannel eveningAdhkarChannel = AndroidNotificationChannel(
             'evening_adhkar_channel_id',
             'أذكار المساء',
             description: 'تذكير بأذكار المساء',
             importance: Importance.high,
             playSound: true,
-            sound: RawResourceAndroidNotificationSound('evening'), // Using 'evening' sound
+            sound: RawResourceAndroidNotificationSound('night'),
           );
           await androidImplementation.createNotificationChannel(eveningAdhkarChannel);
 
@@ -136,7 +116,6 @@ class LocalNotificationService {
           print('Custom sound test successful - sound resources appear to be available');
         }
       } catch (e) {
-        // If there's an exception, the sound file likely doesn't exist
         _isCustomSoundAvailable = false;
         print('Custom sound test failed - sound resources may not be available: $e');
         print('Notifications will be scheduled without custom sound');
@@ -150,7 +129,6 @@ class LocalNotificationService {
   /// Configure local timezone
   Future<void> _configureLocalTimeZone() async {
     if (kIsWeb || Platform.isLinux || Platform.isWindows) {
-      // Timezone initialization might differ or not be needed on these platforms
       return;
     }
     tz.initializeTimeZones();
@@ -164,7 +142,6 @@ class LocalNotificationService {
       }
     } catch (e) {
       print('Error configuring timezone: $e');
-      // Fallback or default timezone logic might be needed here
     }
   }
 
@@ -174,52 +151,42 @@ class LocalNotificationService {
       final bool? result = await _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+        alert: true,
+        badge: true,
+        sound: true,
+      );
       return result ?? false;
     } else if (Platform.isAndroid) {
-      // Android 13+ permissions are requested during initialization
-      // For older versions, permissions are generally granted by default
-      // You might check specific permissions if needed
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation = _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
       final bool? granted = await androidImplementation?.areNotificationsEnabled();
       if (granted == false) {
-        // Optionally guide user to settings
         print("Android notifications permission not granted.");
-        // Request again if needed, though it was requested in init
         return await androidImplementation?.requestNotificationsPermission() ?? false;
       }
-      return granted ?? true; // Assume granted if check fails or on older Android
+      return granted ?? true;
     }
-    return false; // Default for other platforms
+    return false;
   }
 
   /// Notification Details
   // -> prayer notification details
   NotificationDetails _prayerNotificationDetails() {
-    // Create Android notification details with or without custom sound based on availability
     final AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
       'prayer_channel_id', 'أوقات الصلاة',
       channelDescription: 'إشعارات أوقات الصلاة اليومية',
       importance: Importance.max,
       priority: Priority.high,
-      // Only use custom sound if available, otherwise use default sound
       sound: _isCustomSoundAvailable ? const RawResourceAndroidNotificationSound('prayer') : null,
-      // Use 'prayer' sound
       enableLights: true,
       enableVibration: true,
       playSound: true,
-      // Always play sound (default if custom not available)
       audioAttributesUsage: AudioAttributesUsage.alarm,
       category: AndroidNotificationCategory.alarm,
     );
 
-    // iOS notification details - use default sound if custom not specified
     final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
-      sound: _isCustomSoundAvailable ? 'prayer.caf' : null, // Use 'prayer.caf' for iOS
+      sound: _isCustomSoundAvailable ? 'prayer.caf' : null,
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
@@ -228,7 +195,7 @@ class LocalNotificationService {
     return NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
-      macOS: darwinNotificationDetails, // Reuse Darwin details
+      macOS: darwinNotificationDetails,
     );
   }
 
@@ -240,14 +207,14 @@ class LocalNotificationService {
       importance: Importance.defaultImportance,
       priority: Priority.defaultPriority,
       playSound: true,
-      sound: RawResourceAndroidNotificationSound('say'), // Use 'say' sound for Prophet Reminder
+      sound: RawResourceAndroidNotificationSound('say'),
     );
 
     const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: false,
       presentSound: true,
-      sound: 'say.caf', // Use 'say.caf' for iOS
+      sound: 'say.caf',
     );
 
     return const NotificationDetails(
@@ -318,14 +285,14 @@ class LocalNotificationService {
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      sound: _isCustomSoundAvailable ? const RawResourceAndroidNotificationSound('evening') : null,
+      sound: _isCustomSoundAvailable ? const RawResourceAndroidNotificationSound('night') : null,
     );
 
     final DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      sound: _isCustomSoundAvailable ? 'evening.caf' : null,
+      sound: _isCustomSoundAvailable ? 'night.caf' : null,
     );
 
     return NotificationDetails(
@@ -346,7 +313,6 @@ class LocalNotificationService {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     print('Current time in local timezone (${tz.local}): $now');
 
-    // Map to ensure Arabic names are used consistently in the notification text
     const Map<String, String> prayerNameArabic = {
       'fajr': 'الفجر',
       'dhuhr': 'الظهر',
@@ -354,7 +320,6 @@ class LocalNotificationService {
       'maghrib': 'المغرب',
       'isha': 'العشاء',
       'shuruq': 'الشروق',
-      // Add lowercase Arabic keys for robustness if input keys might be Arabic
       'الفجر': 'الفجر',
       'الظهر': 'الظهر',
       'العصر': 'العصر',
@@ -367,7 +332,6 @@ class LocalNotificationService {
       final prayerKey = entry.key;
       final timeString = entry.value;
 
-      // Get the standardized Arabic display name from our map
       final String prayerNameDisplay = prayerNameArabic[prayerKey.toLowerCase()] ?? prayerKey;
 
       try {
@@ -391,7 +355,6 @@ class LocalNotificationService {
 
         final int notificationId = _getPrayerId(prayerKey);
 
-        // Use Arabic name in title and body
         final String title = 'حان الآن موعد آذان $prayerNameDisplay';
         final String body = 'لا تنس ذكر الله. تقبل الله طاعتكم.';
 
@@ -412,13 +375,12 @@ class LocalNotificationService {
           print('Error in zonedSchedule for $prayerNameDisplay: $e');
           print('Attempting to schedule without custom sound...');
 
-          // If scheduling with custom sound fails, try with default sound
           final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
             'prayer_channel_id', 'أوقات الصلاة',
             channelDescription: 'إشعارات أوقات الصلاة اليومية',
             importance: Importance.max,
             priority: Priority.high,
-            playSound: true, // Use default system sound
+            playSound: true,
           );
 
           final NotificationDetails fallbackDetails = NotificationDetails(
@@ -457,7 +419,7 @@ class LocalNotificationService {
     }
     await cancelRepeatingNotification();
 
-    final int notificationId = 99;
+    const int notificationId = 99;
     const String title = 'صلي على محمد ﷺ';
     const String body = 'اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد.';
 
@@ -476,35 +438,7 @@ class LocalNotificationService {
       print('Hourly reminder scheduled successfully');
     } catch (e) {
       print('Error scheduling hourly reminder: $e');
-      print('Attempting to schedule with default notification settings...');
-
-      // Fallback to simplest notification settings
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'repeating_channel_id',
-        'تذكير الصلاة على النبي',
-        channelDescription: 'إشعارات الصلاة على النبي كل ساعة',
-        importance: Importance.defaultImportance,
-        priority: Priority.defaultPriority,
-      );
-
-      const NotificationDetails fallbackDetails = NotificationDetails(
-        android: androidDetails,
-      );
-
-      try {
-        await _flutterLocalNotificationsPlugin.periodicallyShow(
-          notificationId,
-          title,
-          body,
-          RepeatInterval.hourly,
-          fallbackDetails,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          payload: 'repeating_prophet_reminder',
-        );
-        print('Hourly reminder scheduled successfully with fallback settings');
-      } catch (fallbackError) {
-        print('Failed to schedule hourly reminder even with fallback settings: $fallbackError');
-      }
+      print('Failed to schedule hourly reminder.');
     }
   }
 
@@ -526,11 +460,10 @@ class LocalNotificationService {
       now.year,
       now.month,
       now.day,
-      10, // 10 AM
-      0, // 0 minutes
+      10,
+      0,
     );
 
-    // Adjust to next Friday if current day is not Friday or time has passed
     while (scheduledDate.weekday != DateTime.friday || scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
@@ -579,7 +512,7 @@ class LocalNotificationService {
         now.day,
         hour,
         minute,
-      ).add(const Duration(minutes: 30)); // 30 minutes after Fajr
+      ).add(const Duration(minutes: 30));
 
       if (scheduledDate.isBefore(now)) {
         scheduledDate = scheduledDate.add(const Duration(days: 1));
@@ -667,7 +600,6 @@ class LocalNotificationService {
   /// Cancel all scheduled prayer notifications
   Future<void> cancelAllPrayerNotifications() async {
     for (int i = 1; i <= 6; i++) {
-      // Assuming prayer IDs are 1-6
       await _flutterLocalNotificationsPlugin.cancel(i);
     }
     print('Cancelled all prayer notifications.');
@@ -713,14 +645,13 @@ class LocalNotificationService {
       case 'shuruq':
         return 6;
       default:
-        return 0; // Should not happen
+        return 0;
     }
   }
 
   // Handle notification tap
   void _onDidReceiveNotificationResponse(NotificationResponse notificationResponse) {
     print('Notification tapped: ${notificationResponse.payload}');
-    // Handle notification tap here, e.g., navigate to a specific screen
   }
 }
 

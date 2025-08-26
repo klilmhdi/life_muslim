@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 
 import '../../../../core/utils/consts/app_consts.dart';
@@ -28,20 +29,18 @@ Widget buildAzkarCardWidget({
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
+            SvgPicture.asset(
               AppAssets.openBooks,
               width: 64.w,
               height: 64.h,
-              color: AppConsts.basicDarkAppColor,
+              theme: SvgTheme(currentColor: AppConsts.basicDarkAppColor),
             ),
             SizedBox(height: 10.h),
             Text(
               azkarTitle,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: AppConsts.font12size,
-                  fontWeight: FontWeight.bold,
-                  color: AppConsts.basicDarkAppColor),
+                  fontSize: AppConsts.font12size, fontWeight: FontWeight.bold, color: AppConsts.basicDarkAppColor),
             ),
             SizedBox(height: 5.h),
             Text(
@@ -77,7 +76,7 @@ Widget buildNameOfAllahCardWidget({
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
+            SvgPicture.asset(
               AppAssets.nameOfAllahIcon,
               width: 64.w,
               height: 64.h,
@@ -99,9 +98,7 @@ Widget buildNameOfAllahCardWidget({
                   nameTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: AppConsts.font16size,
-                      fontWeight: FontWeight.bold,
-                      color: AppConsts.basicDarkAppColor),
+                      fontSize: AppConsts.font16size, fontWeight: FontWeight.bold, color: AppConsts.basicDarkAppColor),
                 ),
               ],
             ),

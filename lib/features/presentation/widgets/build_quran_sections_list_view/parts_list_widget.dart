@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/shared_preferenced/shared_preferenced.dart';
 import '../../../../core/utils/assets/assets.dart';
@@ -53,7 +54,7 @@ class PartsList extends StatelessWidget {
                         shape: const ContinuousRectangleBorder(),
                         shadowColor: Colors.transparent,
                         child: ListTile(
-                          leading: Image.asset(AppAssets.juzIcon, width: 40.w, height: 40.h),
+                          leading: SvgPicture.asset(AppAssets.juzIcon, width: 40.w, height: 40.h),
                           title: Text(
                             partName,
                             style: TextStyle(

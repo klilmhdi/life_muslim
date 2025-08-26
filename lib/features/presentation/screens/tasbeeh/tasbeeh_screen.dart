@@ -21,9 +21,7 @@ class TasbeehScreen extends StatelessWidget {
         body: Container(
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage(AppAssets.tasbeehBackgroundImage),
-                  fit: BoxFit.cover,
-                  opacity: 0.5)),
+                  image: AssetImage(AppAssets.tasbeehBackgroundImage), fit: BoxFit.cover, opacity: 0.5)),
           child: SafeArea(
             child: BlocBuilder<TasbeehCubit, TasbeehState>(
               builder: (context, state) {
@@ -34,7 +32,7 @@ class TasbeehScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: RowButtonsWidget(() {
+                          child: rowButtonsWidget(() {
                             final currentIndex = state.tasbeehList.indexOf(state.selectedTasbeeh);
                             if (currentIndex > 0) {
                               final prevItem = state.tasbeehList[currentIndex - 1];
@@ -55,9 +53,8 @@ class TasbeehScreen extends StatelessWidget {
                             child: Container(
                               width: 350.w,
                               height: 350.h,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.transparent)),
+                              decoration:
+                                  BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.transparent)),
                               child: AnimatedFlipCounter(
                                   duration: const Duration(milliseconds: 500),
                                   value: state.counter,

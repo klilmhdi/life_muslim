@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 import 'package:quran_life_muslim/core/utils/functions/functions.dart';
@@ -142,7 +142,7 @@ class _PrayerTimingsScreenState extends State<PrayerTimingsScreen> {
   Widget _buildTimingItem(String name, String time, String image, bool isPortrait) => !isPortrait
       ? Row(
           children: [
-            Image.asset(image, height: 40.h, width: 40.w),
+            SvgPicture.asset(image, height: 40.h, width: 40.w),
             Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -171,7 +171,7 @@ class _PrayerTimingsScreenState extends State<PrayerTimingsScreen> {
         )
       : Column(
           children: [
-            Image.asset(image, height: 40.h, width: 40.w),
+            SvgPicture.asset(image, height: 40.h, width: 40.w),
             SizedBox(height: 10.h),
             Text(
               name,

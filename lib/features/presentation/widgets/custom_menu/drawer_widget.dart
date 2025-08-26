@@ -17,14 +17,9 @@ Widget customDrawer(context) => Drawer(
             width: double.infinity,
             height: 300.h,
             child: const DrawerHeader(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppAssets.drawerBackgroundImage),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: SizedBox(),
-            ),
+                decoration: BoxDecoration(
+                    image: DecorationImage(image: AssetImage(AppAssets.drawerBackgroundImage), fit: BoxFit.cover)),
+                child: SizedBox()),
           ),
           Expanded(
             child: SingleChildScrollView(

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:quran_life_muslim/core/enums/message_type.dart';
 import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
@@ -121,7 +122,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       extendBodyBehindAppBar: true,
       appBar: buildAppBar(context, title: "العلامات المرجعية", isLeading: false),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
             image: DecorationImage(image: AssetImage(AppAssets.aqsaBackgroundImage), fit: BoxFit.cover, opacity: 0.3)),
         child: savedBookmarks.isEmpty
             ? EmptyWidgets.bookmarkEmptyWidget()
@@ -133,14 +134,14 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
                   // فحص شامل للبيانات المطلوبة
                   if (bookmark == null || !bookmark.containsKey("surahName") || !bookmark.containsKey("selectedAyah")) {
-                    return const SizedBox(); // أو عرض ويدجت بديلة للبيانات غير الصالحة
+                    return const SizedBox();
                   }
 
                   final String surahName = bookmark["surahName"] as String? ?? "غير معروف";
                   final AyahsModel? ayah = bookmark["selectedAyah"] as AyahsModel?;
 
                   if (ayah == null) {
-                    return const SizedBox(); // أو عرض ويدجت بديلة للآية غير الموجودة
+                    return const SizedBox();
                   }
 
                   return SlideTransition(
@@ -168,7 +169,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                         leading: Stack(
                           alignment: Alignment.center,
                           children: [
-                            Image.asset(
+                            SvgPicture.asset(
                               AppAssets.ayahNumberSignIcon,
                               height: 35.h,
                               width: 35.w,

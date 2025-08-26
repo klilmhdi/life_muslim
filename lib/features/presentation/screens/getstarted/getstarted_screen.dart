@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 import 'package:quran_life_muslim/features/presentation/screens/layout/layout.dart';
@@ -82,7 +83,7 @@ class GetstartedScreen extends StatelessWidget {
                 backgroundColor: CupertinoColors.white,
                 child: Padding(
                   padding: EdgeInsets.all(15.sp),
-                  child: Image.asset(AppAssets.icon),
+                  child: SvgPicture.asset(AppAssets.icon),
                 ),
               ),
             ],
@@ -128,7 +129,7 @@ class GetstartedScreen extends StatelessWidget {
                 backgroundColor: CupertinoColors.white,
                 child: Padding(
                   padding: EdgeInsets.all(5.sp),
-                  child: Image.asset(
+                  child: SvgPicture.asset(
                     AppAssets.icon,
                   ),
                 ),

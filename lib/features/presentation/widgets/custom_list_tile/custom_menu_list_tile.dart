@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 
-Widget customListTile(String icon, String title, {required bool isSoon, void Function()? onTap}) =>
-    ListTile(
-      leading: Image.asset(
+Widget customListTile(String icon, String title, {required bool isSoon, void Function()? onTap}) => ListTile(
+      // leading: Image.asset(
+      //   icon,
+      //   height: 40.h,
+      //   width: 40.w,
+      // ),
+      leading: SvgPicture.asset(
         icon,
         height: 40.h,
         width: 40.w,

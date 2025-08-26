@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_appbar/build_appbar.dart';
 
 import '../../../manage/change_ayah_display/change_ayah_display_cubit.dart';
@@ -32,7 +33,8 @@ class _ChangeAyahDisplayScreenState extends State<ChangeAyahDisplayScreen> {
                       }
                     },
                   ),
-                  children: [Image.asset('assets/images/list.png')],
+                  // children: [Image.asset('assets/images/list.png')],
+                  children: [SvgPicture.asset('assets/images/list.svg')],
                 ),
                 ExpansionTile(
                   title: RadioListTile<AyahDisplayMode>(
@@ -45,7 +47,8 @@ class _ChangeAyahDisplayScreenState extends State<ChangeAyahDisplayScreen> {
                       }
                     },
                   ),
-                  children: [Image.asset('assets/images/page.jpg')],
+                  // children: [Image.asset('assets/images/page.jpg')],
+                  children: [SvgPicture.asset('assets/images/page.svg')],
                 ),
               ],
             ),

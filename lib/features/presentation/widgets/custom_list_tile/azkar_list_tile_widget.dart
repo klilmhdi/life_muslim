@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 
 import '../../../../core/utils/assets/assets.dart';
@@ -53,9 +54,9 @@ Widget azkarListTile(
             ? Stack(
                 alignment: Alignment.center,
                 children: [
-                  Image.asset(
+                  SvgPicture.asset(
                     AppAssets.repeatIcon,
-                    color: AppConsts.skyBlueDarkColor,
+                    theme: SvgTheme(currentColor: AppConsts.skyBlueDarkColor),
                     height: 40.h,
                     width: 40.w,
                   ),

@@ -9,7 +9,7 @@ import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/consts/app_consts.dart';
 import 'package:quran_life_muslim/features/presentation/manage/location/location_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_appbar/build_appbar.dart';
-import 'package:vibration/vibration.dart';
+// import 'package:vibration/vibration.dart';
 
 class QiblahScreen extends StatefulWidget {
   const QiblahScreen({super.key});
@@ -164,14 +164,14 @@ class _QiblahScreenState extends State<QiblahScreen> with SingleTickerProviderSt
         begin = (qiblahDirection.qiblah * (pi / 180) * -1);
         _animationController!.forward(from: 0);
 
-        const double tolerance = 5.0;
-        if ((qiblahDirection.direction - qiblahDirection.qiblah).abs() <= tolerance) {
-          Vibration.hasVibrator().then((hasVibrator) {
-            if (hasVibrator == true) {
-              Vibration.vibrate(duration: 500);
-            }
-          });
-        }
+        // const double tolerance = 5.0;
+        // if ((qiblahDirection.direction - qiblahDirection.qiblah).abs() <= tolerance) {
+        //   Vibration.hasVibrator().then((hasVibrator) {
+        //     if (hasVibrator == true) {
+        //       Vibration.vibrate(duration: 500);
+        //     }
+        //   });
+        // }
 
         return Center(
           child: Column(

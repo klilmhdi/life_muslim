@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quran_life_muslim/core/enums/message_type.dart';
 import 'package:quran_life_muslim/features/data/models/quran/surah_model.dart';
 import 'package:quran_life_muslim/features/presentation/manage/bookmark/bookmark_bloc.dart';
@@ -187,7 +188,7 @@ class _AyahJuzPageState extends State<AyahJuzPage> {
                             visible: isBookmarked,
                             child: Align(
                               alignment: Alignment.topLeft,
-                              child: Image.asset(
+                              child: SvgPicture.asset(
                                 AppAssets.bookmarkJuzIcon,
                                 height: 150.h,
                                 width: 150.w,
