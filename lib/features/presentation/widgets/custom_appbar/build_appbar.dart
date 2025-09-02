@@ -24,7 +24,8 @@ PreferredSizeWidget buildAppBar(
                   onPressed: () => Scaffold.of(context).openDrawer(),
                   icon: SvgPicture.asset(
                     AppAssets.menuIcon,
-                    theme: SvgTheme(currentColor: CupertinoColors.white),
+                    color: Colors.white,
+                    // theme: SvgTheme(currentColor: CupertinoColors.white),
                     height: 24.h,
                     width: 24.w,
                   ));

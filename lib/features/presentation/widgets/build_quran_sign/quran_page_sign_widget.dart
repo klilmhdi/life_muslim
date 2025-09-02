@@ -10,6 +10,7 @@ Widget juzPageSignWidget(String juzTitle) => SizedBox(
       height: 50.h,
       width: 50.w,
       child: Stack(
+        alignment: AlignmentDirectional.center,
         children: [
           SvgPicture.asset(AppAssets.quranIconSignIcon, fit: BoxFit.cover, height: 50.h, width: 50.w),
           Center(

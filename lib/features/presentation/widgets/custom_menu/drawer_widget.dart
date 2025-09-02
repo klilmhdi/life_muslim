@@ -7,7 +7,7 @@ import 'package:quran_life_muslim/features/presentation/screens/settings/layout/
 import 'package:quran_life_muslim/features/presentation/widgets/custom_divider/build_divider_widget.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_list_tile/custom_menu_list_tile.dart';
 
-import '../../screens/settings/layout/adhan/athan_by_month_screen.dart';
+import '../../screens/settings/layout/athan_by_month_screen.dart';
 
 Widget customDrawer(context) => Drawer(
       child: Column(
@@ -29,7 +29,7 @@ Widget customDrawer(context) => Drawer(
                     AppAssets.bookmarkIcon,
                     "العلامات المرجعية",
                     isSoon: false,
-                    onTap: () => navToWithRTLAnimation(context, const BookmarksScreen()),
+                    onTap: () => navToWithRTLAnimation(context, BookmarksScreen()),
                   ),
                   buildWideDivider(),
                   customListTile(

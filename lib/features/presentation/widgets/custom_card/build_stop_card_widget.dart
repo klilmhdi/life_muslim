@@ -7,6 +7,7 @@ import 'package:quran_life_muslim/core/utils/functions/functions.dart';
 import 'package:quran_life_muslim/features/presentation/manage/bookmark/bookmark_bloc.dart';
 
 import '../../../../core/utils/consts/app_consts.dart';
+import '../../../data/models/quran/ayah_model.dart';
 import '../../../data/models/quran/surah_model.dart';
 import '../../screens/quran/ayah_screen.dart';
 
@@ -18,17 +19,15 @@ Widget buildStopCardWidget(BuildContext context, {required Color color}) {
         lastBookmark = state.bookmarks.last;
       }
 
+      String? surahName = lastBookmark != null ? lastBookmark["surahName"] : null;
+      int? ayahNumber = lastBookmark != null ? lastBookmark["ayahNumber"] : null;
+      List<dynamic>? ayahsList = lastBookmark != null ? lastBookmark["ayahs"] : null;
+
       return GestureDetector(
         onTap: () {
-          if (lastBookmark != null) {
-            navToDownToTop(
-                context,
-                AyahScreen(
-                  surah: SurahModel(
-                    name: lastBookmark["surahName"],
-                    ayahs: lastBookmark["ayahs"],
-                  ),
-                ));
+          if (lastBookmark != null && ayahsList != null) {
+            List<AyahsModel> ayahs = ayahsList.map((ayahJson) => AyahsModel.fromJson(ayahJson)).toList();
+            navToDownToTop(context, AyahScreen(surah: SurahModel(name: surahName ?? "غير معروف", ayahs: ayahs)));
           }
         },
         child: SizedBox(
@@ -37,18 +36,13 @@ Widget buildStopCardWidget(BuildContext context, {required Color color}) {
           child: Card(
             margin: EdgeInsets.all(10.sp),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.sp)),
-            // color: AppConsts.basicDarkAppColor,
             color: color,
             surfaceTintColor: AppConsts.skyBlueLightColor,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.sp),
-                image: const DecorationImage(
-                  image: AssetImage(AppAssets.thirdBackgroundImage),
-                  fit: BoxFit.cover,
-                  opacity: 0.8,
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(10.sp),
+                  image: const DecorationImage(
+                      image: AssetImage(AppAssets.thirdBackgroundImage), fit: BoxFit.cover, opacity: 0.8)),
               child: Padding(
                 padding: EdgeInsets.all(10.sp),
                 child: Column(
@@ -69,9 +63,7 @@ Widget buildStopCardWidget(BuildContext context, {required Color color}) {
                               ),
                               SizedBox(width: 3.w),
                               Text(
-                                lastBookmark != null
-                                    ? "آخر موضع قراءة"
-                                    : "لا توجد علامات مرجعية",
+                                lastBookmark != null ? "آخر موضع قراءة" : "لا توجد علامات مرجعية",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: AppConsts.font14size,
@@ -111,35 +103,26 @@ Widget buildStopCardWidget(BuildContext context, {required Color color}) {
                         Expanded(
                           flex: 3,
                           child: Column(
-                            spacing: 4,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                lastBookmark != null
-                                    ? lastBookmark["surahName"] ?? "غير معروف"
-                                    : "اذهب لقراءة ورد من القرآن الكريم",
+                                lastBookmark != null ? surahName ?? "غير معروف" : "اذهب لقراءة ورد من القرآن الكريم",
                                 style: TextStyle(
                                   color: CupertinoColors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: lastBookmark != null
-                                      ? AppConsts.font24size
-                                      : AppConsts.font14size,
-                                  fontFamily:
-                                      lastBookmark != null ? AppConsts.uthmanic : AppConsts.tajawal,
+                                  fontSize: lastBookmark != null ? AppConsts.font24size : AppConsts.font14size,
+                                  fontFamily: lastBookmark != null ? AppConsts.uthmanic : AppConsts.tajawal,
                                 ),
                               ),
                               Text(
                                 lastBookmark != null
-                                    ? "الآية رقم: (${lastBookmark["selectedAyah"]?.numberInSurah ?? "?"})"
+                                    ? "الآية رقم: (${ayahNumber ?? "?"})"
                                     : "ثم احفظ الآية التي تقف عندها",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: CupertinoColors.white,
-                                  fontSize: lastBookmark != null
-                                      ? AppConsts.font18size
-                                      : AppConsts.font14size,
-                                  fontFamily:
-                                      lastBookmark != null ? AppConsts.uthmanic : AppConsts.tajawal,
+                                  fontSize: lastBookmark != null ? AppConsts.font18size : AppConsts.font14size,
+                                  fontFamily: lastBookmark != null ? AppConsts.uthmanic : AppConsts.tajawal,
                                 ),
                               )
                             ],

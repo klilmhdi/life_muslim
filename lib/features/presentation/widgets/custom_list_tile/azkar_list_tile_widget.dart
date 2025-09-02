@@ -56,7 +56,8 @@ Widget azkarListTile(
                 children: [
                   SvgPicture.asset(
                     AppAssets.repeatIcon,
-                    theme: SvgTheme(currentColor: AppConsts.skyBlueDarkColor),
+                    // theme: SvgTheme(currentColor: AppConsts.skyBlueDarkColor),
+                    color: AppConsts.skyBlueDarkColor,
                     height: 40.h,
                     width: 40.w,
                   ),

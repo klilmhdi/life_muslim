@@ -33,7 +33,8 @@ Widget buildAzkarCardWidget({
               AppAssets.openBooks,
               width: 64.w,
               height: 64.h,
-              theme: SvgTheme(currentColor: AppConsts.basicDarkAppColor),
+              color: AppConsts.basicDarkAppColor,
+              // theme: SvgTheme(currentColor: AppConsts.basicDarkAppColor),
             ),
             SizedBox(height: 10.h),
             Text(

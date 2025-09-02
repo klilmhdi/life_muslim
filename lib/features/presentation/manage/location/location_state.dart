@@ -11,6 +11,15 @@ class LocationInitial extends LocationState {}
 
 class LocationLoading extends LocationState {}
 
+class LocationHasSavedData extends LocationState {
+  final Map<String, dynamic> locationData;
+
+  const LocationHasSavedData(this.locationData);
+
+  @override
+  List<Object?> get props => [locationData];
+}
+
 class LocationSaved extends LocationState {
   final double latitude;
   final double longitude;

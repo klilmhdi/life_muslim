@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../../features/data/models/quran/surah_model.dart';
+import '../consts/app_consts.dart';
 
 /// DateTime formatted
 String getFormattedDate() {
@@ -115,9 +119,7 @@ class ScaleTransitionForMusic extends PageRouteBuilder {
           reverseTransitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, anotherAnimation, child) {
             animation = CurvedAnimation(
-                curve: Curves.fastLinearToSlowEaseIn,
-                parent: animation,
-                reverseCurve: Curves.fastOutSlowIn);
+                curve: Curves.fastLinearToSlowEaseIn, parent: animation, reverseCurve: Curves.fastOutSlowIn);
             return ScaleTransition(
               alignment: Alignment.bottomCenter,
               scale: animation,
@@ -140,12 +142,9 @@ class RTLScreenAnimation extends PageRouteBuilder {
             reverseTransitionDuration: const Duration(milliseconds: 400),
             transitionsBuilder: (context, animation, anotherAnimation, child) {
               animation = CurvedAnimation(
-                  curve: Curves.fastLinearToSlowEaseIn,
-                  parent: animation,
-                  reverseCurve: Curves.fastOutSlowIn);
+                  curve: Curves.fastLinearToSlowEaseIn, parent: animation, reverseCurve: Curves.fastOutSlowIn);
               return SlideTransition(
-                position: Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0))
-                    .animate(animation),
+                position: Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).animate(animation),
                 child: page,
               );
             });
@@ -164,12 +163,9 @@ class LTRScreenAnimation extends PageRouteBuilder {
             reverseTransitionDuration: const Duration(milliseconds: 400),
             transitionsBuilder: (context, animation, anotherAnimation, child) {
               animation = CurvedAnimation(
-                  curve: Curves.fastLinearToSlowEaseIn,
-                  parent: animation,
-                  reverseCurve: Curves.fastOutSlowIn);
+                  curve: Curves.fastLinearToSlowEaseIn, parent: animation, reverseCurve: Curves.fastOutSlowIn);
               return SlideTransition(
-                position: Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0))
-                    .animate(animation),
+                position: Tween(begin: const Offset(1.0, 0.0), end: const Offset(0.0, 0.0)).animate(animation),
                 textDirection: TextDirection.rtl,
                 child: page,
               );

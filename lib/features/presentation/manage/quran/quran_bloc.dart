@@ -1,88 +1,80 @@
 import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
-import 'package:quran_life_muslim/features/data/models/quran/ayah_model.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:quran_life_muslim/features/data/models/quran/quran_model.dart';
-import 'package:quran_life_muslim/features/data/models/quran/surah_model.dart';
 
 part 'quran_event.dart';
 part 'quran_state.dart';
 
-class QuranBloc extends Bloc<QuranEvent, QuranState> {
+class QuranBloc extends HydratedBloc<QuranEvent, QuranState> {
   QuranBloc() : super(QuranInitial()) {
     on<LoadQuran>(_onLoadQuran);
   }
 
+  QuranModel? _cachedQuran;
+
   Future<void> _onLoadQuran(LoadQuran event, Emitter<QuranState> emit) async {
+    // ✅ لو الكاش مش فاضي رجّعه
+    if (_cachedQuran != null) {
+      emit(QuranLoaded(_cachedQuran!));
+      return;
+    }
+
     emit(QuranLoading());
     try {
-      final String response = await rootBundle.loadString('assets/json/quran.json');
+      final String response =
+      await rootBundle.loadString('assets/json/quran.json');
       final data = json.decode(response);
 
       if (!data.containsKey('data') || !data['data'].containsKey('surahs')) {
         throw Exception("Invalid JSON format: Missing 'data.surahs'");
       }
 
-      final quranData = QuranModel.fromJson(data);
+      final surahs = data['data']['surahs'] as List;
+
+      QuranModel quranData;
+      if (surahs.any((s) => (s['ayahs'] as List).length > 20)) {
+        quranData = await compute<Map<String, dynamic>, QuranModel>(
+          _parseQuranData,
+          data as Map<String, dynamic>,
+        );
+      } else {
+        quranData = QuranModel.fromJson(data);
+      }
+
+      // ✅ خزّن النتيجة في الكاش الداخلي + Hydrated Storage
+      _cachedQuran = quranData;
       emit(QuranLoaded(quranData));
     } catch (e) {
-      emit(QuranError("Failed to load Quran data"));
+      emit(QuranError("Failed to load Quran data: $e"));
     }
   }
+
+  /// ✅ HydratedBloc serialization
+  @override
+  QuranState? fromJson(Map<String, dynamic> json) {
+    try {
+      final model = QuranModel.fromJson(json);
+      _cachedQuran = model;
+      return QuranLoaded(model);
+    } catch (_) {
+      return QuranInitial();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(QuranState state) {
+    if (state is QuranLoaded) {
+      return state.quranData.toJson();
+    }
+    return null;
+  }
 }
-// import 'dart:convert';
-//
-// import 'package:bloc/bloc.dart';
-// import 'package:flutter/services.dart';
-// import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
-//
-// import '../../../data/models/quran/ayah_model.dart';
-// import '../../../data/models/quran/quran_model.dart';
-// import '../../../data/models/quran/surah_model.dart';
-//
-// part 'quran_event.dart';
-//
-// part 'quran_state.dart';
-//
-// class QuranBloc extends Bloc<QuranEvent, QuranState> {
-//   QuranBloc() : super(QuranInitial()) {
-//     on<LoadQuran>(_onLoadQuran);
-//     on<SaveBookmark>(_onSaveBookmark);
-//   }
-//
-//   Future<void> _onLoadQuran(LoadQuran event, Emitter<QuranState> emit) async {
-//     emit(QuranLoading());
-//     try {
-//       final String response = await rootBundle.loadString('assets/json/quran.json');
-//       final data = json.decode(response);
-//
-//       if (!data.containsKey('data') || !data['data'].containsKey('surahs')) {
-//         throw Exception("Invalid JSON format: Missing 'data.surahs'");
-//       }
-//
-//       final quranData = QuranModel.fromJson(data);
-//       emit(QuranLoaded(quranData));
-//     } catch (e, s) {
-//       print("Error: $e");
-//       print("StackTrace: $s");
-//       emit(QuranError("Failed to load Quran data"));
-//     }
-//   }
-//
-//   Future<void> _onSaveBookmark(SaveBookmark event, Emitter<QuranState> emit) async {
-//     try {
-//       await SharedPrefController.saveBookmark(
-//         quranModel: event.quranModel,
-//         surahName: event.surahName,
-//         ayahs: event.ayahs,
-//         selectedAyah: event.selectedAyah,
-//       );
-//       emit(BookmarkSaved());
-//     } catch (e) {
-//       print("Bookmark error: $e");
-//       emit(QuranError("Failed to save bookmark"));
-//     }
-//   }
-// }
+
+/// لازم تكون Top-Level
+QuranModel _parseQuranData(Map<String, dynamic> json) {
+  return QuranModel.fromJson(json);
+}

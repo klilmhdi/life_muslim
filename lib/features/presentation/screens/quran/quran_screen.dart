@@ -28,7 +28,7 @@ class QuranScreen extends StatelessWidget {
             if (state is QuranLoaded) {
               return TabBarView(
                 children: [
-                  const SurahList(),
+                  SurahList(),
                   PartsList(surahs: state.quranData.data?.surahs ?? []),
                 ],
               );

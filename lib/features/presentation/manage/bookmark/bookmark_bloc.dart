@@ -1,17 +1,15 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-import '../../../../core/shared_preferenced/shared_preferenced.dart';
 import '../../../data/models/quran/ayah_model.dart';
 import '../../../data/models/quran/surah_model.dart';
 
 part 'bookmark_event.dart';
-
 part 'bookmark_state.dart';
 
-class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
-  BookmarkBloc() : super(BookmarkInitial()) {
+class BookmarkBloc extends HydratedBloc<BookmarkEvent, BookmarkState> {
+  BookmarkBloc() : super(const BookmarkInitial()) {
     /// for ayahs
     on<SaveBookmark>(_onSaveBookmark);
     on<RemoveBookmark>(_onRemoveBookmark);
@@ -24,76 +22,125 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     on<GetPageBookmark>(_onGetPageBookmark);
   }
 
+  @override
+  BookmarkState? fromJson(Map<String, dynamic> json) {
+    try {
+      return BookmarkState.fromMap(json);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(BookmarkState state) {
+    try {
+      return state.toMap();
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// for ayahs
-  Future<void> _onSaveBookmark(SaveBookmark event, Emitter<BookmarkState> emit) async {
+  void _onSaveBookmark(SaveBookmark event, Emitter<BookmarkState> emit) {
     try {
-      await SharedPrefController.saveBookmark(
-        quranModel: event.quranModel,
-        surahName: event.surahName,
-        ayahs: event.ayahs,
-        selectedAyah: event.selectedAyah,
-      );
-      emit(BookmarkSaved());
+      final Map<String, dynamic> bookmarkData = {
+        "quranModel": event.quranModel.toJson(),
+        "surahName": event.surahName,
+        "ayahs": event.ayahs.map((ayah) => ayah.toJson()).toList(),
+        "selectedAyah": event.selectedAyah.toJson(),
+        "ayahNumber": event.selectedAyah.numberInSurah,
+        "page": event.selectedAyah.page,
+        "juz": event.selectedAyah.juz,
+        "hizbQuarter": event.selectedAyah.hizbQuarter,
+      };
+
+      // Check if bookmark already exists
+      final exists = state.bookmarks.any((bookmark) =>
+          bookmark["surahName"] == event.surahName && bookmark["ayahNumber"] == event.selectedAyah.numberInSurah);
+
+      if (!exists) {
+        final newBookmarks = List<Map<String, dynamic>>.from(state.bookmarks);
+        newBookmarks.add(bookmarkData);
+
+        emit(BookmarkSaved(bookmarks: newBookmarks, pageBookmarks: state.pageBookmarks));
+      }
     } catch (e) {
-      emit(BookmarkError("Failed to save bookmark"));
+      emit(BookmarkError("Failed to save bookmark", bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
-  Future<void> _onRemoveBookmark(RemoveBookmark event, Emitter<BookmarkState> emit) async {
+  void _onRemoveBookmark(RemoveBookmark event, Emitter<BookmarkState> emit) {
     try {
-      await SharedPrefController.removeBookmark(event.surahName, event.ayahNumber);
-      emit(BookmarkRemoved());
+      final newBookmarks = state.bookmarks
+          .where(
+              (bookmark) => !(bookmark["surahName"] == event.surahName && bookmark["ayahNumber"] == event.ayahNumber))
+          .toList();
+
+      emit(BookmarkRemoved(bookmarks: newBookmarks, pageBookmarks: state.pageBookmarks));
     } catch (e) {
-      emit(BookmarkError("Failed to remove bookmark"));
+      emit(BookmarkError("Failed to remove bookmark", bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
-  Future<void> _onGetBookmarks(GetBookmarks event, Emitter<BookmarkState> emit) async {
+  void _onGetBookmarks(GetBookmarks event, Emitter<BookmarkState> emit) {
     try {
-      final bookmarks = await SharedPrefController.getBookmarks();
-      emit(BookmarksLoaded(bookmarks));
+      emit(BookmarksLoaded(bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     } catch (e) {
-      emit(BookmarkError("Failed to get bookmarks"));
+      emit(BookmarkError("Failed to get bookmarks", bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
-  Future<void> _onCheckBookmark(CheckBookmark event, Emitter<BookmarkState> emit) async {
+  void _onCheckBookmark(CheckBookmark event, Emitter<BookmarkState> emit) async {
     try {
-      final isBookmarked =
-          await SharedPrefController.isBookmarked(event.surahName, event.ayahNumber);
-      emit(BookmarkChecked(isBookmarked));
+      emit(BookmarkLoading(bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final isBookmarked = state.bookmarks
+          .any((bookmark) => bookmark["surahName"] == event.surahName && bookmark["ayahNumber"] == event.ayahNumber);
+
+      emit(BookmarksLoaded(bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
+
+      debugPrint("Checked → $isBookmarked");
     } catch (e) {
-      emit(BookmarkError("Failed to check bookmark"));
+      emit(BookmarkError("Failed to check bookmark", bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
   /// for pages
-  Future<void> _onSavePageBookmark(SavePageBookmark event, Emitter<BookmarkState> emit) async {
+  void _onSavePageBookmark(SavePageBookmark event, Emitter<BookmarkState> emit) {
     try {
-      await SharedPrefController.saveBookmarkedPage(event.juzNumber, event.pageNumber);
+      final newPageBookmarks = Map<String, int>.from(state.pageBookmarks);
+      newPageBookmarks[event.juzNumber.toString()] = event.pageNumber;
+
       debugPrint('تم حفظ الجزء ${event.juzNumber} - الصفحة ${event.pageNumber}');
-      emit(PageBookmarkSaved());
+      emit(PageBookmarkSaved(bookmarks: state.bookmarks, pageBookmarks: newPageBookmarks));
     } catch (e) {
       debugPrint('خطأ في الحفظ: $e');
-      emit(BookmarkError("Failed to save page bookmark"));
+      emit(BookmarkError("Failed to save page bookmark",
+          bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
-  Future<void> _onRemovePageBookmark(RemovePageBookmark event, Emitter<BookmarkState> emit) async {
+  void _onRemovePageBookmark(RemovePageBookmark event, Emitter<BookmarkState> emit) {
     try {
-      await SharedPrefController.removeBookmarkedPage(event.juzNumber);
-      emit(PageBookmarkRemoved());
+      final newPageBookmarks = Map<String, int>.from(state.pageBookmarks);
+      newPageBookmarks.remove(event.juzNumber.toString());
+
+      emit(PageBookmarkRemoved(bookmarks: state.bookmarks, pageBookmarks: newPageBookmarks));
     } catch (e) {
-      emit(BookmarkError("Failed to remove page bookmark"));
+      emit(BookmarkError("Failed to remove page bookmark",
+          bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 
-  Future<void> _onGetPageBookmark(GetPageBookmark event, Emitter<BookmarkState> emit) async {
+  void _onGetPageBookmark(GetPageBookmark event, Emitter<BookmarkState> emit) {
     try {
-      final pageNumber = await SharedPrefController.getBookmarkedPage(event.juzNumber);
-      emit(PageBookmarkLoaded(pageNumber));
+      final pageNumber = state.pageBookmarks[event.juzNumber.toString()];
+      emit(PageBookmarkLoaded(pageNumber, bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     } catch (e) {
-      emit(BookmarkError("Failed to get page bookmark"));
+      emit(
+          BookmarkError("Failed to get page bookmark", bookmarks: state.bookmarks, pageBookmarks: state.pageBookmarks));
     }
   }
 }

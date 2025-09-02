@@ -10,6 +10,7 @@ Widget quranQuarterWidget(String quarterTitle) => SizedBox(
       height: 40.h,
       width: 40.w,
       child: Stack(
+        alignment: AlignmentDirectional.center,
         children: [
           SvgPicture.asset(
             AppAssets.hizbIconIcon,
@@ -17,29 +18,26 @@ Widget quranQuarterWidget(String quarterTitle) => SizedBox(
             height: 40.h,
             width: 40.w,
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "الحزب",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: CupertinoColors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: AppConsts.font7size,
-                  ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "الحزب",
+                style: TextStyle(
+                  color: CupertinoColors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppConsts.font7size,
                 ),
-                Text(
-                  quarterTitle,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: CupertinoColors.black,
-                    fontSize: AppConsts.font10size,
-                  ),
+              ),
+              Text(
+                quarterTitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoColors.black,
+                  fontSize: AppConsts.font8size,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

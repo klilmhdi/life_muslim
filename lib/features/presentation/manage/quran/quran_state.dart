@@ -1,29 +1,11 @@
-// part of 'quran_bloc.dart';
-//
-// abstract class QuranState {}
-//
-// class QuranInitial extends QuranState {}
-//
-// class QuranLoading extends QuranState {}
-//
-// class QuranLoaded extends QuranState {
-//   final QuranModel quranData;
-//
-//   QuranLoaded(this.quranData);
-// }
-//
-// class QuranError extends QuranState {
-//   final String message;
-//
-//   QuranError(this.message);
-// }
-//
-// class BookmarkSaved extends QuranState {}
-//
-// class RemoveBookmark extends QuranState {}
 part of 'quran_bloc.dart';
 
-abstract class QuranState {}
+abstract class QuranState extends Equatable {
+  const QuranState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class QuranInitial extends QuranState {}
 
@@ -32,11 +14,17 @@ class QuranLoading extends QuranState {}
 class QuranLoaded extends QuranState {
   final QuranModel quranData;
 
-  QuranLoaded(this.quranData);
+  const QuranLoaded(this.quranData);
+
+  @override
+  List<Object?> get props => [quranData];
 }
 
 class QuranError extends QuranState {
   final String message;
 
-  QuranError(this.message);
+  const QuranError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

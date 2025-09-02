@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quran_life_muslim/core/app_cubit/app/app_cubit.dart';
 import 'package:quran_life_muslim/core/bloc_observer.dart';
 import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
@@ -35,6 +37,7 @@ import 'features/presentation/manage/notification/notification_bloc.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await LocalNotificationService().initializeNotification();
+
   // await RemoteNotificationService.init();
 
   LicenseRegistry.addLicense(() async* {
@@ -51,6 +54,11 @@ void main() async {
   Bloc.observer = MyBlocObserver();
 
   final bool isFirstLaunch = SharedPrefController().getValueFor<bool>(PrKeys.isFirstLaunch.name) ?? false;
+
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory:
+        kIsWeb ? HydratedStorageDirectory.web : HydratedStorageDirectory((await getTemporaryDirectory()).path),
+  );
 
   runApp(MyApp(showGetStarted: !isFirstLaunch));
 }
@@ -77,25 +85,25 @@ class _MyAppState extends State<MyApp> {
         ],
         child: MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => QuranBloc()..add(LoadQuran())),
-            BlocProvider(create: (context) => QuranAzkarBloc()..add(LoadQuranAzkar())),
-            BlocProvider(create: (context) => SunnahAzkarBloc()..add(LoadSunnahAzkar())),
-            BlocProvider(create: (context) => RoqaiaBloc()..add(LoadRoqaia())),
-            BlocProvider(create: (context) => NawawiBloc()..add(LoadNawawi())),
-            BlocProvider(create: (context) => HijjahBloc()..add(LoadHijjah())),
-            BlocProvider(create: (context) => NameOfAllahBloc()..add(LoadNameOfAllah())),
-            BlocProvider(create: (context) => AzkarBloc()..add(LoadAzkar())),
-            BlocProvider(create: (context) => BookmarkBloc()..add(GetBookmarks())),
-            BlocProvider(
+            BlocProvider<QuranBloc>(create: (context) => QuranBloc()..add(LoadQuran())),
+            BlocProvider<QuranAzkarBloc>(create: (context) => QuranAzkarBloc()..add(LoadQuranAzkar())),
+            BlocProvider<SunnahAzkarBloc>(create: (context) => SunnahAzkarBloc()..add(LoadSunnahAzkar())),
+            BlocProvider<RoqaiaBloc>(create: (context) => RoqaiaBloc()..add(LoadRoqaia())),
+            BlocProvider<NawawiBloc>(create: (context) => NawawiBloc()..add(LoadNawawi())),
+            BlocProvider<HijjahBloc>(create: (context) => HijjahBloc()..add(LoadHijjah())),
+            BlocProvider<NameOfAllahBloc>(create: (context) => NameOfAllahBloc()..add(LoadNameOfAllah())),
+            BlocProvider<AzkarBloc>(create: (context) => AzkarBloc()..add(LoadAzkar())),
+            BlocProvider<BookmarkBloc>(create: (context) => BookmarkBloc()..add(GetBookmarks())),
+            BlocProvider<PrayerTimingsBloc>(
               create: (context) => PrayerTimingsBloc(
                 repository: context.read<PrayerTimingsRepository>(),
                 notificationService: LocalNotificationService(),
                 sharedPrefController: SharedPrefController(),
               ),
             ),
-            BlocProvider(create: (context) => LocationBloc()),
-            BlocProvider(create: (_) => NotificationBloc(LocalNotificationService())),
-            BlocProvider(create: (context) => MonthlyPrayerTimingBloc(LocationBloc())),
+            BlocProvider<LocationBloc>(create: (context) => LocationBloc()..add(LoadLocationEvent())),
+            BlocProvider<NotificationBloc>(create: (_) => NotificationBloc(LocalNotificationService())),
+            BlocProvider<MonthlyPrayerTimingBloc>(create: (context) => MonthlyPrayerTimingBloc(LocationBloc())),
             BlocProvider<AppCubit>(create: (context) => AppCubit()..setLanguage(languageCode: null)),
             BlocProvider<ChangeAyahDisplayCubit>(create: (context) => ChangeAyahDisplayCubit()),
           ],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:quran_life_muslim/features/data/repository/prayer_timing_repo.dart';
@@ -10,18 +12,17 @@ part 'monthly_prayer_timing_state.dart';
 
 class MonthlyPrayerTimingBloc extends Bloc<MonthlyPrayerTimingEvent, MonthlyPrayerTimingState> {
   final LocationBloc _locationBloc;
+  StreamSubscription? _locationSubscription;
 
   MonthlyPrayerTimingBloc(this._locationBloc) : super(MonthlyPrayerTimingInitial()) {
     on<FetchPrayerTimes>(_onFetchMonthlyPrayerTiming);
-    _locationBloc.stream.listen((locationState) {
-      if (locationState is LocationSaved) {
-        add(FetchPrayerTimes(
-            lat: locationState.latitude,
-            long: locationState.longitude,
-            month: DateTime.now().month,
-            year: DateTime.now().year));
-      }
-    });
+    _locationSubscription = _locationBloc.stream.listen((locationState) {});
+  }
+
+  @override
+  Future<void> close() {
+    _locationSubscription?.cancel();
+    return super.close();
   }
 
   Future<void> _onFetchMonthlyPrayerTiming(

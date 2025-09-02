@@ -25,9 +25,11 @@ class AppAssets {
   static const String maghribIcon = 'assets/icons/maghrib.svg';
   static const String menuIcon = 'assets/icons/menu.svg';
   static const String notificationIcon = 'assets/icons/notification.svg';
+  static const String locationIcon = 'assets/icons/location.svg';
   static const String nameOfAllahIcon = 'assets/icons/name_of_allah_icon.svg';
   static const String openBooks = 'assets/icons/open_book.svg';
   static const String privacyIcon = 'assets/icons/privacy-policy.svg';
+  static const String qiblaCompassImage = 'assets/icons/qibla.png';
   static const String quranIcon = 'assets/icons/edited_quran.svg';
   static const String quranIconSignIcon = 'assets/icons/quran_number_sign.svg';
   static const String ramadanCalenderIcon = 'assets/icons/ramadan_calender.svg';
@@ -47,7 +49,6 @@ class AppAssets {
   static const String fourthBackgroundImage = 'assets/images/background4.png';
   static const String fifthBackgroundImage = 'assets/images/background5.png';
   static const String kabbaBackgroundImage = 'assets/images/kabba.png';
-  static const String qiblaCompassImage = 'assets/images/qibla.png';
   static const String quranFrameImage = 'assets/images/quran_frame.png';
   static const String quranTitleImage = 'assets/images/quran_title_border.png';
   static const String secondBackgroundImage = 'assets/images/background2.png';

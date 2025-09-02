@@ -13,7 +13,6 @@ import 'package:quran_life_muslim/features/presentation/widgets/custom_pop_up_me
 import 'package:quran_life_muslim/features/presentation/widgets/custom_snack_bar/snackbar_widget.dart';
 
 import '../../../../core/app_cubit/app/app_cubit.dart';
-import '../../../../core/shared_preferenced/shared_preferenced.dart';
 import '../../../../core/utils/assets/assets.dart';
 import '../../../../core/utils/consts/app_consts.dart';
 import '../../../data/models/quran/quran_ayah_model.dart';
@@ -25,13 +24,8 @@ class AyahJuzPage extends StatefulWidget {
   final String partTitle;
   final int initialPage;
 
-  const AyahJuzPage({
-    super.key,
-    required this.surahs,
-    required this.partNumber,
-    required this.partTitle,
-    this.initialPage = 0,
-  });
+  const AyahJuzPage(
+      {super.key, required this.surahs, required this.partNumber, required this.partTitle, this.initialPage = 0});
 
   @override
   State<AyahJuzPage> createState() => _AyahJuzPageState();
@@ -91,54 +85,41 @@ class _AyahJuzPageState extends State<AyahJuzPage> {
   void _updateCurrentPage() {
     final newPageIndex = _pageController.page?.round() ?? 0;
     if (newPageIndex != currentPageIndex) {
-      setState(() {
-        currentPageIndex = newPageIndex;
-      });
+      setState(() => currentPageIndex = newPageIndex);
     }
   }
 
-  void _toggleAppBar() {
-    setState(() {
-      _isAppBarVisible = !_isAppBarVisible;
-    });
-  }
+  void _toggleAppBar() => setState(() => _isAppBarVisible = !_isAppBarVisible);
 
-  void _togglePageBookmark() {
-    final pageKeys = ayahsByPage.keys.toList();
-    final currentPage = pageKeys.isNotEmpty ? pageKeys[currentPageIndex] : 0;
-
-    context.read<BookmarkBloc>().add(
-          SavePageBookmark(
-            juzNumber: widget.partNumber,
-            pageNumber: currentPage,
-          ),
-        );
-
-    showCustomSnackBar(
-      context: context,
-      title: "تم حفظ الصفحة للعلامة المرجعية  بنجاح: $currentPage",
-      duration: 3,
-      type: MessageType.success,
-    );
-  }
-
-  void _removePageBookmark() {
-    final pageKeys = ayahsByPage.keys.toList();
-    final currentPage = pageKeys.isNotEmpty ? pageKeys[currentPageIndex] : 0;
-
-    context.read<BookmarkBloc>().add(
-          RemovePageBookmark(juzNumber: widget.partNumber),
-        );
-
-    showCustomSnackBar(
-      context: context,
-      title: "تم إزالة العلامة المرجعية من الصفحة: $currentPage",
-      duration: 3,
-      type: MessageType.success,
-    );
-
-    setState(() {});
-  }
+  // void _togglePageBookmark() {
+  //   final pageKeys = ayahsByPage.keys.toList();
+  //   final currentPage = pageKeys.isNotEmpty ? pageKeys[currentPageIndex] : 0;
+  //
+  //   context.read<BookmarkBloc>().add(SavePageBookmark(juzNumber: widget.partNumber, pageNumber: currentPage));
+  //
+  //   showCustomSnackBar(
+  //     context: context,
+  //     title: "تم حفظ الصفحة للعلامة المرجعية  بنجاح: $currentPage",
+  //     duration: 3,
+  //     type: MessageType.success,
+  //   );
+  // }
+  //
+  // void _removePageBookmark() {
+  //   final pageKeys = ayahsByPage.keys.toList();
+  //   final currentPage = pageKeys.isNotEmpty ? pageKeys[currentPageIndex] : 0;
+  //
+  //   context.read<BookmarkBloc>().add(RemovePageBookmark(juzNumber: widget.partNumber));
+  //
+  //   showCustomSnackBar(
+  //     context: context,
+  //     title: "تم إزالة العلامة المرجعية من الصفحة: $currentPage",
+  //     duration: 3,
+  //     type: MessageType.success,
+  //   );
+  //
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -147,140 +128,312 @@ class _AyahJuzPageState extends State<AyahJuzPage> {
     final currentAyahs = ayahsByPage[currentPage] ?? [];
     final currentQuarter = currentAyahs.isNotEmpty ? currentAyahs.first.ayah.hizbQuarter : 0;
 
-    return BlocConsumer<AppCubit, AppState>(
-      listener: (context, state) {},
+    return BlocConsumer<BookmarkBloc, BookmarkState>(
+      listener: (context, state) {
+        if (state is PageBookmarkSaved) {
+          showCustomSnackBar(
+            context: context,
+            title: "تم حفظ الصفحة ${currentPage} بنجاح",
+            duration: 2,
+            type: MessageType.success,
+          );
+        } else if (state is PageBookmarkRemoved) {
+          showCustomSnackBar(
+            context: context,
+            title: "تم إزالة العلامة المرجعية من الصفحة ${currentPage}",
+            duration: 2,
+            type: MessageType.success,
+          );
+        }
+      },
       builder: (context, state) {
-        return FutureBuilder<bool>(
-            future: SharedPrefController.isPageBookmarked(
-              widget.partNumber,
-              currentPage,
-            ),
-            builder: (context, snapshot) {
-              final isBookmarked = snapshot.data ?? false;
-              return Scaffold(
-                appBar: _isAppBarVisible
-                    ? buildAppBar(
-                        context,
-                        title: widget.partTitle,
-                        isLeading: false,
-                        extraWidget: QuranJuzMenuOptionsWidget(
-                          saveCurrentPage: _togglePageBookmark,
-                          removeCurrentPageBookmark: _removePageBookmark,
-                          isCurrentPageBookmarked: isBookmarked,
+        final isBookmarked = state.pageBookmarks[widget.partNumber.toString()] == currentPage;
+
+        return Scaffold(
+          appBar: _isAppBarVisible
+              ? buildAppBar(
+                  context,
+                  title: widget.partTitle,
+                  isLeading: false,
+                  extraWidget: QuranJuzMenuOptionsWidget(
+                    saveCurrentPage: () {
+                      context.read<BookmarkBloc>().add(
+                            SavePageBookmark(juzNumber: widget.partNumber, pageNumber: currentPage),
+                          );
+                    },
+                    removeCurrentPageBookmark: () {
+                      context.read<BookmarkBloc>().add(
+                            RemovePageBookmark(juzNumber: widget.partNumber),
+                          );
+                    },
+                    isCurrentPageBookmarked: isBookmarked,
+                  ),
+                )
+              : null,
+          extendBodyBehindAppBar: true,
+          body: GestureDetector(
+            onTap: _toggleAppBar,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(AppAssets.aqsaBackgroundImage),
+                  fit: BoxFit.cover,
+                  opacity: 0.3,
+                ),
+              ),
+              child: SafeArea(
+                child: Stack(
+                  children: [
+                    Visibility(
+                      visible: isBookmarked,
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: SvgPicture.asset(
+                          AppAssets.bookmarkJuzIcon,
+                          height: 150.h,
+                          width: 150.w,
                         ),
-                      )
-                    : null,
-                extendBodyBehindAppBar: true,
-                body: GestureDetector(
-                  onTap: _toggleAppBar,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(AppAssets.aqsaBackgroundImage),
-                        fit: BoxFit.cover,
-                        opacity: 0.3,
                       ),
                     ),
-                    child: SafeArea(
-                      child: Stack(
-                        children: [
-                          Visibility(
-                            visible: isBookmarked,
-                            child: Align(
-                              alignment: Alignment.topLeft,
-                              child: SvgPicture.asset(
-                                AppAssets.bookmarkJuzIcon,
-                                height: 150.h,
-                                width: 150.w,
-                              ),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Expanded(
-                                child: PageView.builder(
-                                  controller: _pageController,
-                                  itemCount: ayahsByPage.length,
-                                  itemBuilder: (context, index) {
-                                    final page = pageKeys[index];
-                                    final ayahsForPage = ayahsByPage[page]!;
-                                    return SingleChildScrollView(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 14.sp),
-                                        child: Column(
-                                          children: [
-                                            RichText(
-                                              textAlign: TextAlign.center,
-                                              text: TextSpan(
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: AppConsts.uthmanic,
-                                                ),
-                                                children: buildJuzWidget(
-                                                  context,
-                                                  ayahsForPage,
-                                                  state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                    Column(
+                      children: [
+                        Expanded(
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: ayahsByPage.length,
+                            itemBuilder: (context, index) {
+                              final page = pageKeys[index];
+                              final ayahsForPage = ayahsByPage[page]!;
+                              return SingleChildScrollView(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 14.sp),
+                                  child: Column(
+                                    children: [
+                                      RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: AppConsts.uthmanic,
+                                          ),
+                                          children: buildJuzWidget(
+                                            context,
+                                            ayahsForPage,
+                                            context.read<AppCubit>().state.themeCurrentIndex == 0
+                                                ? Colors.black
+                                                : Colors.white,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 8.sp,
-                                    right: 8.sp,
-                                    bottom: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : 5.sp),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    MediaQuery.orientationOf(context) == Orientation.portrait
-                                        ? juzPageSignWidget(currentPage.toString())
-                                        : RichText(
-                                            text: TextSpan(
-                                              style: TextStyle(
-                                                  color: state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                              text: "رقم الصفحة: ",
-                                              children: [TextSpan(text: currentPage.toString())],
-                                            ),
-                                          ),
-                                    buildSmoothPageIndicator(
-                                      context,
-                                      isBookmarked: isBookmarked,
-                                      controller: _pageController,
-                                      count: ayahsByPage.length,
-                                      onClicked: (index) => setState(() => currentPageIndex = index),
+                              );
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 8.sp,
+                            right: 8.sp,
+                            bottom: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : 5.sp,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              MediaQuery.orientationOf(context) == Orientation.portrait
+                                  ? juzPageSignWidget(currentPage.toString())
+                                  : RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                            color: context.read<AppCubit>().state.themeCurrentIndex == 0
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                        text: "رقم الصفحة: ",
+                                        children: [TextSpan(text: currentPage.toString())],
+                                      ),
                                     ),
-                                    MediaQuery.orientationOf(context) == Orientation.portrait
-                                        ? quranQuarterWidget(currentQuarter.toString())
-                                        : RichText(
-                                            text: TextSpan(
-                                              style: TextStyle(
-                                                  color: state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                              text: "رقم الحزب: ",
-                                              children: [TextSpan(text: currentQuarter.toString())],
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                              )
+                              buildSmoothPageIndicator(
+                                context,
+                                isBookmarked: isBookmarked,
+                                controller: _pageController,
+                                count: ayahsByPage.length,
+                                onClicked: (index) => setState(() => currentPageIndex = index),
+                              ),
+                              MediaQuery.orientationOf(context) == Orientation.portrait
+                                  ? quranQuarterWidget(currentQuarter.toString())
+                                  : RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          color: context.read<AppCubit>().state.themeCurrentIndex == 0
+                                              ? Colors.black
+                                              : Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        text: "رقم الحزب: ",
+                                        children: [TextSpan(text: currentQuarter.toString())],
+                                      ),
+                                    ),
                             ],
                           ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  ),
+                  ],
                 ),
-              );
-            });
+              ),
+            ),
+          ),
+        );
       },
     );
   }
+
+// @override
+// Widget build(BuildContext context) {
+//   final pageKeys = ayahsByPage.keys.toList();
+//   final currentPage = pageKeys.isNotEmpty ? pageKeys[currentPageIndex] : 0;
+//   final currentAyahs = ayahsByPage[currentPage] ?? [];
+//   final currentQuarter = currentAyahs.isNotEmpty ? currentAyahs.first.ayah.hizbQuarter : 0;
+//
+//   return BlocConsumer<AppCubit, AppState>(
+//     listener: (context, state) {},
+//     builder: (context, state) {
+//       return FutureBuilder<bool>(
+//           future: SharedPrefController.isPageBookmarked(
+//             widget.partNumber,
+//             currentPage,
+//           ),
+//           builder: (context, snapshot) {
+//             final isBookmarked = snapshot.data ?? false;
+//             return Scaffold(
+//               appBar: _isAppBarVisible
+//                   ? buildAppBar(
+//                       context,
+//                       title: widget.partTitle,
+//                       isLeading: false,
+//                       extraWidget: QuranJuzMenuOptionsWidget(
+//                         saveCurrentPage: _togglePageBookmark,
+//                         removeCurrentPageBookmark: _removePageBookmark,
+//                         isCurrentPageBookmarked: isBookmarked,
+//                       ),
+//                     )
+//                   : null,
+//               extendBodyBehindAppBar: true,
+//               body: GestureDetector(
+//                 onTap: _toggleAppBar,
+//                 child: Container(
+//                   decoration: const BoxDecoration(
+//                     image: DecorationImage(
+//                       image: AssetImage(AppAssets.aqsaBackgroundImage),
+//                       fit: BoxFit.cover,
+//                       opacity: 0.3,
+//                     ),
+//                   ),
+//                   child: SafeArea(
+//                     child: Stack(
+//                       children: [
+//                         Visibility(
+//                           visible: isBookmarked,
+//                           child: Align(
+//                             alignment: Alignment.topLeft,
+//                             child: SvgPicture.asset(
+//                               AppAssets.bookmarkJuzIcon,
+//                               height: 150.h,
+//                               width: 150.w,
+//                             ),
+//                           ),
+//                         ),
+//                         Column(
+//                           children: [
+//                             Expanded(
+//                               child: PageView.builder(
+//                                 controller: _pageController,
+//                                 itemCount: ayahsByPage.length,
+//                                 itemBuilder: (context, index) {
+//                                   final page = pageKeys[index];
+//                                   final ayahsForPage = ayahsByPage[page]!;
+//                                   return SingleChildScrollView(
+//                                     child: Padding(
+//                                       padding: EdgeInsets.symmetric(horizontal: 14.sp),
+//                                       child: Column(
+//                                         children: [
+//                                           RichText(
+//                                             textAlign: TextAlign.center,
+//                                             text: TextSpan(
+//                                               style: const TextStyle(
+//                                                 fontWeight: FontWeight.bold,
+//                                                 fontFamily: AppConsts.uthmanic,
+//                                               ),
+//                                               children: buildJuzWidget(
+//                                                 context,
+//                                                 ayahsForPage,
+//                                                 state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ),
+//                                   );
+//                                 },
+//                               ),
+//                             ),
+//                             Padding(
+//                               padding: EdgeInsets.only(
+//                                 left: 8.sp,
+//                                 right: 8.sp,
+//                                 bottom: MediaQuery.orientationOf(context) == Orientation.portrait ? 0.0 : 5.sp,
+//                               ),
+//                               child: Row(
+//                                 crossAxisAlignment: CrossAxisAlignment.center,
+//                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                 children: [
+//                                   MediaQuery.orientationOf(context) == Orientation.portrait
+//                                       ? juzPageSignWidget(currentPage.toString())
+//                                       : RichText(
+//                                           text: TextSpan(
+//                                             style: TextStyle(
+//                                                 color: state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
+//                                                 fontWeight: FontWeight.bold),
+//                                             text: "رقم الصفحة: ",
+//                                             children: [TextSpan(text: currentPage.toString())],
+//                                           ),
+//                                         ),
+//                                   buildSmoothPageIndicator(
+//                                     context,
+//                                     isBookmarked: isBookmarked,
+//                                     controller: _pageController,
+//                                     count: ayahsByPage.length,
+//                                     onClicked: (index) => setState(() => currentPageIndex = index),
+//                                   ),
+//                                   MediaQuery.orientationOf(context) == Orientation.portrait
+//                                       ? quranQuarterWidget(currentQuarter.toString())
+//                                       : RichText(
+//                                           text: TextSpan(
+//                                             style: TextStyle(
+//                                               color: state.themeCurrentIndex == 0 ? Colors.black : Colors.white,
+//                                               fontWeight: FontWeight.bold,
+//                                             ),
+//                                             text: "رقم الحزب: ",
+//                                             children: [TextSpan(text: currentQuarter.toString())],
+//                                           ),
+//                                         ),
+//                                 ],
+//                               ),
+//                             )
+//                           ],
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             );
+//           });
+//     },
+//   );
+// }
 }

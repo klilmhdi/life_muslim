@@ -19,30 +19,24 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     on<RefreshLocationEvent>(_onRefreshLocation);
   }
 
-  Future<void> _onLoadSavedLocation(LocationEvent event, Emitter<LocationState> emit) async {
+  Future<void> _onLoadSavedLocation(
+    LoadLocationEvent event,
+    Emitter<LocationState> emit,
+  ) async {
     emit(LocationLoading());
     try {
       final data = await LocationLocator().fetchSavedLocation();
-
-      // التحقق من أن الإحداثيات غير صفرية وغير فارغة
       final lat = data?["latitude"];
       final long = data?["longitude"];
       final hasValidLocation = lat != null && long != null && lat != 0.0 && long != 0.0;
 
       if (hasValidLocation) {
-        emit(LocationSaved(
-          latitude: lat,
-          longitude: long,
-          city: data?["city"] ?? "غير معروف",
-          country: data?["country"] ?? "غير معروف",
-        ));
+        emit(LocationHasSavedData(data!));
       } else {
-        // إذا لم يكن هناك موقع محفوظ أو كان غير صالح، نطلب الإذن
         add(RequestLocationPermissionEvent());
       }
     } catch (e) {
       emit(LocationError("حدث خطأ أثناء تحميل الموقع المحفوظ: $e"));
-      // في حالة الخطأ، نطلب الإذن أيضاً
       add(RequestLocationPermissionEvent());
     }
   }
@@ -71,12 +65,14 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       final locationData = await LocationLocator().checkLocationPermissionAndSave();
 
       if (locationData != null) {
-        emit(LocationSaved(
-          latitude: locationData["latitude"],
-          longitude: locationData["longitude"],
-          city: locationData["city"],
-          country: locationData["country"],
-        ));
+        emit(
+          LocationSaved(
+            latitude: locationData["latitude"],
+            longitude: locationData["longitude"],
+            city: locationData["city"],
+            country: locationData["country"],
+          ),
+        );
       } else {
         emit(const LocationError("تعذر الحصول على الموقع الحالي"));
       }
@@ -90,24 +86,31 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   Future<void> _onRefreshLocation(RefreshLocationEvent event, Emitter<LocationState> emit) async {
     emit(LocationLoading());
     try {
-      final locationData = await LocationLocator().checkLocationPermissionAndSave(); // استخدام الدالة الصحيحة
+      final savedData = await LocationLocator().fetchSavedLocation();
+      final lat = savedData?["latitude"];
+      final long = savedData?["longitude"];
 
-      if (locationData != null) {
-        // حفظ الموقع الجديد في Shared Preferences
-        await SharedPrefController.saveLocationData(
-          locationData["latitude"],
-          locationData["longitude"],
-          locationData["city"],
-          locationData["country"],
-        );
-        emit(LocationSaved(
-          latitude: locationData["latitude"],
-          longitude: locationData["longitude"],
-          city: locationData["city"],
-          country: locationData["country"],
-        ));
+      if (lat != null && long != null && lat != 0.0 && long != 0.0) {
+        emit(LocationHasSavedData(savedData!));
       } else {
-        emit(const LocationError("تعذر تحديث الموقع الحالي. تأكد من اتصالك بالإنترنت."));
+        // فقط إذا لم تكن هناك بيانات مخزنة، اطلب موقع جديد
+        final locationData = await LocationLocator().checkLocationPermissionAndSave();
+        if (locationData != null) {
+          await SharedPrefController.saveLocationData(
+            locationData["latitude"],
+            locationData["longitude"],
+            locationData["city"],
+            locationData["country"],
+          );
+          emit(LocationSaved(
+            latitude: locationData["latitude"],
+            longitude: locationData["longitude"],
+            city: locationData["city"],
+            country: locationData["country"],
+          ));
+        } else {
+          emit(const LocationError("تعذر تحديث الموقع الحالي. تأكد من اتصالك بالإنترنت."));
+        }
       }
     } on TimeoutException {
       emit(const LocationError("استغرقت عملية تحديث الموقع وقتاً طويلاً"));
@@ -116,7 +119,5 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
   }
 
-  Future<void> _onResetLocation(ResetLocationEvent event, Emitter<LocationState> emit) async {
-    emit(LocationInitial());
-  }
+  Future<void> _onResetLocation(ResetLocationEvent event, Emitter<LocationState> emit) async => emit(LocationInitial());
 }

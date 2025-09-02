@@ -10,13 +10,13 @@ import 'package:quran_life_muslim/features/presentation/widgets/custom_appbar/bu
 import 'package:quran_life_muslim/features/presentation/widgets/custom_button/buttons.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../../../../../../core/enums/message_type.dart';
-import '../../../../../../core/shared_preferenced/shared_preferenced.dart';
-import '../../../../../data/models/adhan/azan_by_month_model.dart';
-import '../../../../manage/location/location_bloc.dart';
-import '../../../../manage/preyer_timing/for_month/monthly_prayer_timing_bloc.dart';
-import '../../../../widgets/build_prayer_widgets/prayer_monthly_widgets.dart';
-import '../../../../widgets/custom_snack_bar/snackbar_widget.dart';
+import '../../../../../core/enums/message_type.dart';
+import '../../../../../core/shared_preferenced/shared_preferenced.dart';
+import '../../../../data/models/adhan/azan_by_month_model.dart';
+import '../../../manage/location/location_bloc.dart';
+import '../../../manage/preyer_timing/for_month/monthly_prayer_timing_bloc.dart';
+import '../../../widgets/build_prayer_widgets/prayer_monthly_widgets.dart';
+import '../../../widgets/custom_snack_bar/snackbar_widget.dart';
 
 class PrayerTimesScreen extends StatefulWidget {
   const PrayerTimesScreen({super.key});
@@ -28,6 +28,7 @@ class PrayerTimesScreen extends StatefulWidget {
 class PrayerTimesScreenState extends State<PrayerTimesScreen> {
   late PrayerDataSource prayerDataSource;
   final DataGridController _dataGridController = DataGridController();
+  bool _hasRequestedData = false;
 
   @override
   void initState() {
@@ -37,6 +38,31 @@ class PrayerTimesScreenState extends State<PrayerTimesScreen> {
     context.read<LocationBloc>().add(LoadLocationEvent());
   }
 
+  void _fetchPrayerTimes(LocationState state) {
+    if (_hasRequestedData) return; // منع الطلبات المتكررة
+
+    double lat;
+    double long;
+
+    if (state is LocationSaved) {
+      lat = state.latitude;
+      long = state.longitude;
+    } else if (state is LocationHasSavedData) {
+      lat = state.locationData["latitude"];
+      long = state.locationData["longitude"];
+    } else {
+      return;
+    }
+
+    _hasRequestedData = true;
+    context.read<MonthlyPrayerTimingBloc>().add(FetchPrayerTimes(
+          lat: lat,
+          long: long,
+          year: DateTime.now().year,
+          month: DateTime.now().month,
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +70,8 @@ class PrayerTimesScreenState extends State<PrayerTimesScreen> {
       extendBodyBehindAppBar: true,
       body: BlocListener<LocationBloc, LocationState>(
         listener: (context, state) {
-          if (state is LocationSaved) {
-            context.read<MonthlyPrayerTimingBloc>().add(FetchPrayerTimes(
-                  lat: state.latitude,
-                  long: state.longitude,
-                  year: DateTime.now().year,
-                  month: DateTime.now().month,
-                ));
+          if (state is LocationSaved || state is LocationHasSavedData) {
+            _fetchPrayerTimes(state);
           }
         },
         child: Container(
@@ -64,16 +85,19 @@ class PrayerTimesScreenState extends State<PrayerTimesScreen> {
           child: SafeArea(
             child: BlocBuilder<LocationBloc, LocationState>(
               builder: (context, locationState) {
-                if (locationState is LocationSaved) {
+                if (locationState is LocationSaved || locationState is LocationHasSavedData) {
                   return BlocConsumer<MonthlyPrayerTimingBloc, MonthlyPrayerTimingState>(
                     listener: (context, prayerState) {
                       if (prayerState is MonthlyPrayerTimesError) {
+                        _hasRequestedData = false; // السماح بإعادة المحاولة
                         showCustomSnackBar(
                           context: context,
                           title: "حاول في وقت لاحق",
                           duration: 300,
                           type: MessageType.error,
                         );
+                      } else if (prayerState is MonthlyPrayerTimesLoaded) {
+                        _hasRequestedData = false; // إعادة تعيين للطلبات المستقبلية
                       }
                     },
                     builder: (context, prayerState) {
@@ -86,11 +110,6 @@ class PrayerTimesScreenState extends State<PrayerTimesScreen> {
                               return PrayerDay(
                                 day: hijriDate?.weekday?.ar ?? '',
                                 date: gregorianDate?.date ?? '',
-                                // fajr: data.timings?.fajr?.split(' ')[0] ?? '',
-                                // dhuhr: data.timings?.dhuhr?.split(' ')[0] ?? '',
-                                // asr: data.timings?.asr?.split(' ')[0] ?? '',
-                                // maghrib: data.timings?.maghrib?.split(' ')[0] ?? '',
-                                // isha: data.timings?.isha?.split(' ')[0] ?? '',
                                 fajr: formatTimeTo12Hour(data.timings?.fajr?.split(' ')[0] ?? ''),
                                 dhuhr: formatTimeTo12Hour(data.timings?.dhuhr?.split(' ')[0] ?? ''),
                                 asr: formatTimeTo12Hour(data.timings?.asr?.split(' ')[0] ?? ''),

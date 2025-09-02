@@ -13,7 +13,6 @@ class AyahScreen extends StatelessWidget {
 
   const AyahScreen({super.key, required this.surah});
 
-  // bool isBookView = true;
   @override
   Widget build(BuildContext context) {
     final displayMode = context.watch<ChangeAyahDisplayCubit>().state.displayMode;

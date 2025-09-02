@@ -40,14 +40,14 @@ class _AyahListCardWidgetState extends State<AyahListCardWidget> {
           showCustomSnackBar(
             context: context,
             title: "توجد مشكلة, حاول في وقت لاحق",
-            duration: 300,
+            duration: 3,
             type: MessageType.error,
           );
         } else if (state is BookmarkSaved) {
           showCustomSnackBar(
             context: context,
             title: "تم حفظ الآية بنجاح",
-            duration: 300,
+            duration: 3,
             type: MessageType.success,
           );
           context.read<BookmarkBloc>().add(GetBookmarks());
@@ -57,8 +57,7 @@ class _AyahListCardWidgetState extends State<AyahListCardWidget> {
         return SingleChildScrollView(
           child: Column(
             children: [
-              widget.surah.name == "سُورَةُ التَّوۡبَةِ" ||
-                      widget.surah.name == "سُورَةُ ٱلْفَاتِحَةِ"
+              widget.surah.name == "سُورَةُ التَّوۡبَةِ" || widget.surah.name == "سُورَةُ ٱلْفَاتِحَةِ"
                   ? const SizedBox()
                   : Center(
                       child: Text(
@@ -78,8 +77,7 @@ class _AyahListCardWidgetState extends State<AyahListCardWidget> {
                   final ayah = widget.surah.ayahs![index];
                   final isBookmarked = state is BookmarksLoaded
                       ? state.bookmarks.any((bookmark) =>
-                          bookmark["ayahNumber"] == ayah.numberInSurah &&
-                          bookmark["surahName"] == widget.surah.name)
+                          bookmark["ayahNumber"] == ayah.numberInSurah && bookmark["surahName"] == widget.surah.name)
                       : false;
 
                   return buildQuranCardWidget(

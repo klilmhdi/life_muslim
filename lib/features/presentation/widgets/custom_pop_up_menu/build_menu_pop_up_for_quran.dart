@@ -64,7 +64,7 @@ class QuranAyahsMenuOptionsWidget extends StatelessWidget {
               Icon(isBookView ? Icons.menu_book_rounded : Icons.table_rows_rounded),
               const SizedBox(width: 8),
               Text(
-                isBookView ? 'تبديل عرض الآيات كص' : 'حفظ الصفحة الحالية',
+                isBookView ? 'تبديل عرض الآيات' : 'حفظ الصفحة الحالية',
                 style: TextStyle(fontSize: 14.sp),
               ),
             ],

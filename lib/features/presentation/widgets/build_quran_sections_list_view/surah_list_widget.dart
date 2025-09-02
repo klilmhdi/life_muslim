@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran_life_muslim/features/presentation/widgets/build_quran_sign/ayah_sign_widget.dart';
 import 'package:quran_life_muslim/core/utils/assets/assets.dart';
 import 'package:quran_life_muslim/core/utils/functions/functions.dart';
+import 'package:quran_life_muslim/features/presentation/manage/bookmark/bookmark_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/manage/quran/quran_bloc.dart';
 import 'package:quran_life_muslim/features/presentation/screens/quran/ayah_screen.dart';
+import 'package:quran_life_muslim/features/presentation/widgets/build_quran_sign/ayah_sign_widget.dart';
 
-import '../../../../core/shared_preferenced/shared_preferenced.dart';
 import '../../../../core/utils/consts/app_consts.dart';
 
 class SurahList extends StatelessWidget {
@@ -34,61 +34,60 @@ class SurahList extends StatelessWidget {
             }
 
             return SafeArea(
-              child: ListView.builder(
-                itemCount: surahs.length,
-                itemBuilder: (context, index) {
-                  final surah = surahs[index];
-                  return Card(
-                    shape: const ContinuousRectangleBorder(),
-                    surfaceTintColor: AppConsts.basicAppColor,
-                    elevation: 13,
-                    color: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      trailing: FutureBuilder<bool>(
-                        future: SharedPrefController.isBookmarked(
-                          surah.name ?? "",
-                          surah.ayahs?.first.numberInSurah ?? 0,
-                        ),
-                        builder: (context, snapshot) {
-                          final isBookmarked = snapshot.data ?? false;
+              child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                builder: (context, bookmarkState) {
+                  return ListView.builder(
+                    itemCount: surahs.length,
+                    itemBuilder: (context, index) {
+                      final surah = surahs[index];
 
-                          return SizedBox(
+                      final isBookmarked = bookmarkState.bookmarks.any(
+                        (bookmark) =>
+                            bookmark["surahName"] == surah.name &&
+                            bookmark["ayahNumber"] == (surah.ayahs?.first.numberInSurah ?? 0),
+                      );
+
+                      return Card(
+                        shape: const ContinuousRectangleBorder(),
+                        surfaceTintColor: AppConsts.basicAppColor,
+                        elevation: 13,
+                        color: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          trailing: SizedBox(
                             width: 90,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 if (isBookmarked)
-                                  const Icon(
-                                    Icons.bookmarks_rounded,
-                                    color: AppConsts.quranIndicatorColor,
-                                  ),
+                                  const Icon(Icons.bookmarks_rounded, color: AppConsts.quranIndicatorColor),
                                 ayahSign(context, "${surah.number ?? 0}"),
                               ],
                             ),
-                          );
-                        },
-                      ),
-
-                      title: Text(
-                        surah.name ?? "Unknown",
-                        style: TextStyle(
-                            fontFamily: AppConsts.uthmanic, fontSize: AppConsts.font22size),
-                      ),
-                      subtitle: Text.rich(
-                        TextSpan(
-                          text: surah.ayahs?.length.toString() ?? "0",
-                          children: [
-                            TextSpan(text: surah.ayahs!.length >= 10 ? " آية" : " آيات"),
-                            const TextSpan(text: " | "),
-                            TextSpan(text: surah.revelationType == 'Meccan' ? "مكية" : "مدنية"),
-                          ],
+                          ),
+                          title: Text(
+                            surah.name ?? "Unknown",
+                            style: TextStyle(
+                              fontFamily: AppConsts.uthmanic,
+                              fontSize: AppConsts.font22size,
+                            ),
+                          ),
+                          subtitle: Text.rich(
+                            TextSpan(
+                              text: surah.ayahs?.length.toString() ?? "0",
+                              children: [
+                                TextSpan(text: surah.ayahs!.length >= 10 ? " آية" : " آيات"),
+                                const TextSpan(text: " | "),
+                                TextSpan(text: surah.revelationType == 'Meccan' ? "مكية" : "مدنية"),
+                              ],
+                            ),
+                          ),
+                          onTap: () => navToWithLTRAnimation(context, AyahScreen(surah: surah)),
                         ),
-                      ),
-                      onTap: () => navToWithLTRAnimation(context, AyahScreen(surah: surah)),
-                    ),
+                      );
+                    },
                   );
                 },
               ),

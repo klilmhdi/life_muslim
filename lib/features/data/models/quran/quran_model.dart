@@ -19,11 +19,7 @@ class QuranModel extends Equatable {
     };
   }
 
-  QuranModel copyWith({DataModel? data}) {
-    return QuranModel(
-      data: data ?? this.data,
-    );
-  }
+  QuranModel copyWith({DataModel? data}) => QuranModel(data: data ?? this.data);
 
   @override
   List<Object?> get props => [data];
@@ -36,23 +32,13 @@ class DataModel extends Equatable {
 
   factory DataModel.fromJson(Map<String, dynamic> json) {
     return DataModel(
-      surahs: (json['surahs'] as List<dynamic>?)
-          ?.map((e) => SurahModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      surahs: (json['surahs'] as List<dynamic>?)?.map((e) => SurahModel.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 
-  Map<String, dynamic>? toJson() {
-    return {
-      'surahs': surahs?.map((e) => e.toJson()).toList(),
-    };
-  }
+  Map<String, dynamic>? toJson() => {'surahs': surahs?.map((e) => e.toJson()).toList()};
 
-  DataModel copyWith({List<SurahModel>? surahs}) {
-    return DataModel(
-      surahs: surahs ?? this.surahs,
-    );
-  }
+  DataModel copyWith({List<SurahModel>? surahs}) => DataModel(surahs: surahs ?? this.surahs);
 
   @override
   List<Object?> get props => [surahs];

@@ -196,7 +196,8 @@ Widget azkarButton({required String title, required void Function() onTapped}) =
                     AppAssets.openBooks,
                     width: 64.w,
                     height: 64.h,
-                    theme: SvgTheme(currentColor: CupertinoColors.white),
+                    color: Colors.white,
+                    // theme: SvgTheme(currentColor: CupertinoColors.white),
                   ),
                   Text(
                     title,

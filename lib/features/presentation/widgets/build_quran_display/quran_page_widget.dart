@@ -55,8 +55,7 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
               }
             },
             builder: (context, quranState) {
-              final bookmarks =
-                  quranState is BookmarksLoaded ? quranState.bookmarks : <Map<String, dynamic>>[];
+              final bookmarks = quranState is BookmarksLoaded ? quranState.bookmarks : <Map<String, dynamic>>[];
 
               return SingleChildScrollView(
                 child: Center(
@@ -89,7 +88,6 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
                             ),
                           ),
                         ],
-                        // SelectableText.rich(
                         Text.rich(
                           TextSpan(
                             style: TextStyle(
@@ -114,9 +112,8 @@ class _QuranPageWidgetState extends State<QuranPageWidget> {
                               },
                             ),
                           ),
-                          textAlign: widget.surah.ayahs!.length < 20 || isShortSurah
-                              ? TextAlign.center
-                              : TextAlign.justify,
+                          textAlign:
+                              widget.surah.ayahs!.length < 20 || isShortSurah ? TextAlign.center : TextAlign.justify,
                         ),
                         SelectableText(
                           AppConsts.endSurah,
@@ -148,11 +145,12 @@ List<TextSpan> buildQuranContentWidget(
   List<Map<String, dynamic>> bookmarks = const [],
   required Function(AyahsModel) onAyahTap,
 }) {
+  debugPrint("------------ Tapped! ------------");
   const wordsToHighlight = AppConsts.redWords;
 
   return surah.ayahs!.map((ayah) {
-    final isBookmarked = bookmarks.any((bookmark) =>
-        bookmark["ayahNumber"] == ayah.numberInSurah && bookmark["surahName"] == surah.name);
+    final isBookmarked = bookmarks
+        .any((bookmark) => bookmark["ayahNumber"] == ayah.numberInSurah && bookmark["surahName"] == surah.name);
 
     final words = ayah.text!.split(' ');
     final textSpans = <TextSpan>[];
@@ -166,32 +164,23 @@ List<TextSpan> buildQuranContentWidget(
           style: TextStyle(
             color: isHighlighted ? Colors.red : defaultColor,
             fontWeight: FontWeight.bold,
-            backgroundColor:
-                isBookmarked ? CupertinoColors.systemYellow.withOpacity(0.5) : Colors.transparent,
+            backgroundColor: isBookmarked ? CupertinoColors.systemYellow.withOpacity(0.5) : Colors.transparent,
             fontSize: defaultLength ? AppConsts.font25size : AppConsts.font18size,
           ),
         ),
       );
     }
 
-    return TextSpan(
-      children: [
-        ...textSpans,
-        TextSpan(
-          text: "﴿${ayah.numberInSurah}﴾ ",
-          style: TextStyle(
-            color: CupertinoColors.destructiveRed,
-            fontWeight: FontWeight.bold,
-            fontSize: defaultLength ? AppConsts.font25size : AppConsts.font18size,
-          ),
+    return TextSpan(children: [
+      ...textSpans,
+      TextSpan(
+        text: "﴿${ayah.numberInSurah}﴾ ",
+        style: TextStyle(
+          color: CupertinoColors.destructiveRed,
+          fontWeight: FontWeight.bold,
+          fontSize: defaultLength ? AppConsts.font25size : AppConsts.font18size,
         ),
-      ],
-      locale: const Locale('ar'),
-      recognizer: TapGestureRecognizer()
-        ..onTap = () {
-          print("........................... Tapped! ...........................");
-          onAyahTap(ayah);
-        },
-    );
+      ),
+    ], locale: const Locale('ar'), recognizer: TapGestureRecognizer()..onTap = () => onAyahTap(ayah));
   }).toList();
 }

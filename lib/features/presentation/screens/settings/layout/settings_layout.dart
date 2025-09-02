@@ -6,7 +6,6 @@ import 'package:quran_life_muslim/features/presentation/screens/settings/options
 import 'package:quran_life_muslim/features/presentation/screens/settings/options/change_notification_screen.dart';
 import 'package:quran_life_muslim/features/presentation/screens/settings/options/check_location_screen.dart';
 import 'package:quran_life_muslim/features/presentation/widgets/custom_list_tile/custom_menu_list_tile.dart';
-import 'package:quran_life_muslim/features/presentation/widgets/open_protofolio_inappwebview/open_inappwebview_widget.dart';
 
 class SettingsLayout extends StatelessWidget {
   const SettingsLayout({super.key});
@@ -42,12 +41,12 @@ class SettingsLayout extends StatelessWidget {
                 isSoon: false,
                 onTap: () => navToWithRTLAnimation(context, ChangeNotificationScreen()),
               ),
-              // customListTile(
-              //   AppAssets.notificationIcon,
-              //   "الموقع",
-              //   isSoon: false,
-              //   onTap: () => navToWithRTLAnimation(context, LocationSettingsScreen()),
-              // ),
+              customListTile(
+                AppAssets.locationIcon,
+                "الموقع",
+                isSoon: false,
+                onTap: () => navToWithRTLAnimation(context, LocationSettingsScreen()),
+              ),
               customListTile(
                 AppAssets.reminderIcon,
                 "التذكيرات",

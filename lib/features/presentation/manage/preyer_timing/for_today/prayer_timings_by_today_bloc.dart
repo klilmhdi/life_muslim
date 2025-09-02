@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart'; // Import SharedPrefController
-import 'package:quran_life_muslim/core/utils/notification/local_notification_service.dart'; // Use the updated service
+import 'package:quran_life_muslim/core/shared_preferenced/shared_preferenced.dart';
+import 'package:quran_life_muslim/core/utils/notification/local_notification_service.dart';
 import 'package:quran_life_muslim/features/data/models/adhan/azan_by_current_timer_model.dart';
 import 'package:quran_life_muslim/features/data/repository/prayer_timing_repo.dart';
 
